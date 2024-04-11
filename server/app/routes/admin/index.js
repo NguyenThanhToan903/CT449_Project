@@ -1,5 +1,7 @@
 const adminRoute = require("./admin.route");
+const productsRoute = require("./products.route");
 
-module.exports = (e) => {
-  e.use("/admins", adminRoute);
+module.exports = (app) => {
+  app.use("/admin", adminRoute);
+  app.use("/admin-products", productsRoute);
 };
