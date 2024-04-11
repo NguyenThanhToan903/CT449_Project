@@ -8,7 +8,15 @@ export default defineConfig({
   server: {
     port: 3001,
     proxy: {
+      // "/": {
+      //   target: "http://localhost:3000/",
+      //   changeOrigin: true,
+      // },
       "/admin": {
+        target: "http://localhost:3000/",
+        changeOrigin: true,
+      },
+      "/admin/register": {
         target: "http://localhost:3000/",
         changeOrigin: true,
       },
