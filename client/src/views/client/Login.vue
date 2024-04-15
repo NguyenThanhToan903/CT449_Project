@@ -60,33 +60,6 @@ export default {
     };
   },
   methods: {
-    // async submit(e) {
-    //   e.preventDefault();
-    //   const Admin = await AdminService.findByEmail(this.account.email);
-    //   console.log(Admin.data.message);
-    //   if (Admin.data.message === "Admin not found") {
-    //     await AccountService.login(this.account);
-    //     console.log("client");
-    //     this.$store.commit("login");
-    //     this.$store.commit("client");
-    //     this.$router.push({ name: "home" });
-    //     console.log(this.$store.state.isAuthenticated, this.$store.state.user);
-    //     console.log(this.$store.state.isAuthenticated, this.$store.state.role);
-    //   } else {
-    //     if (Admin.data.position === "admin") {
-    //       await AdminService.login(this.account);
-    //       this.$store.commit("login");
-    //       this.$store.commit("admin");
-    //       this.$router.push({ name: "admin-products" });
-    //       console.log(
-    //         this.$store.state.isAuthenticated,
-    //         this.$store.state.role
-    //       );
-    //     }
-    //   }
-
-    //   // console.log("positon", Admin.data.position);
-    // },
     async submit(e) {
       e.preventDefault();
       const Admin = await AdminService.findByEmail(this.account.email);
