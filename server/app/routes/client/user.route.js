@@ -8,5 +8,5 @@ router.post("/login", userController.login);
 router.post("/logout", userController.logout);
 router.get("/user", userController.getUser);
 router.get("/borrow", userController.borrow);
-
+router.get("/check-authentication", userController.checkAuthentication);
 module.exports = router;

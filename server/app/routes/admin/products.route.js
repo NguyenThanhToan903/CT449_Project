@@ -1,12 +1,9 @@
 const express = require("express");
 const router = express.Router();
+require("dotenv").config();
 const controller = require("../../controllers/admin/product.controller");
 
-router.get("/", controller.index);
-router.get("/detail/:id", controller.detail);
+router.post("/create-product", controller.create);
 router.get("/:id", controller.editPrint);
-router.post("/create", controller.create);
-router.put("/:id", controller.delete);
-router.put("/update/:id", controller.update);
-
+router.get("/", controller.getAll);
 module.exports = router;

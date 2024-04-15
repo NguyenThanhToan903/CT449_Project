@@ -1,7 +1,7 @@
 const cors = require("cors");
 const express = require("express");
 const cookieParser = require("cookie-parser");
-// const ApiError = require("./app/api-error");
+const ApiError = require("./app/api-error");
 const database = require("./app/config/database");
 const indexAdminRoute = require("./app/routes/admin/index");
 const indexUserRoute = require("./app/routes/client/index");

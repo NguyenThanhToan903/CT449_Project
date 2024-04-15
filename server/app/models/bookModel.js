@@ -22,7 +22,6 @@ const bookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    price: Number,
     priceNew: Number,
     discountPercentage: {
       type: Number,
@@ -49,6 +48,6 @@ const bookSchema = new mongoose.Schema(
   }
 );
 
-const BookModel = mongoose.model("books", bookSchema);
+const BookModel = mongoose.model("books", bookSchema, "books");
 
 module.exports = BookModel;

@@ -1,11 +1,6 @@
 <template>
   <Form class="form-register" @submit.prevent="submit">
-    <!-- :validation-schema="accountFormSchema" -->
     <div class="container register">
-      <!-- <div class="register-img">
-        <img src="../../assets/image/xinh/lyly.png" alt="" />
-      </div> -->
-
       <div class="register-authen">
         <h3>ĐĂNG KÝ</h3>
 
@@ -19,7 +14,6 @@
               placeholder="Nhập tên"
               v-model="account.first_name"
             />
-            <!-- <ErrorMessage name="name" class="error-feedback" /> -->
           </div>
           <div class="form-group">
             <label for="last_name">Họ</label>
@@ -30,7 +24,6 @@
               placeholder="Nhập họ"
               v-model="account.last_name"
             />
-            <!-- <ErrorMessage name="name" class="error-feedback" /> -->
           </div>
           <div class="form-group">
             <label for="email"> Email </label>
@@ -41,7 +34,6 @@
               placeholder="Nhập email"
               v-model="account.email"
             />
-            <!-- <ErrorMessage name="email" class="error-feedback" /> -->
           </div>
 
           <div class="form-group">
@@ -54,7 +46,6 @@
               placeholder="Nhập số điện thoại"
               v-model="account.phone"
             />
-            <!-- <ErrorMessage name="phone" class="error-feedback" /> -->
           </div>
           <div class="form-group">
             <label for="password"> Mật khẩu </label>
@@ -66,11 +57,10 @@
               placeholder="Nhập mật khẩu"
               v-model="account.password"
             />
-            <!-- <ErrorMessage name="passwd" class="error-feedback" /> -->
           </div>
 
           <div class="form-group">
-            <label for="password-confirm"> Mật khẩu lai</label>
+            <label for="password-confirm"> Mật khẩu lại</label>
             <Field
               type="password"
               class="form-control"
@@ -79,7 +69,6 @@
               placeholder="password confirmation"
               v-model="account.password_confirm"
             />
-            <!-- <ErrorMessage name="passwd" class="error-feedback" /> -->
           </div>
           <div class="form-group">
             <label for="position"> Positon </label>
@@ -91,7 +80,6 @@
               placeholder="Position"
               v-model="account.position"
             />
-            <!-- <ErrorMessage name="passwd" class="error-feedback" /> -->
           </div>
         </div>
 
@@ -106,10 +94,10 @@
 </template>
 
 <script>
-import * as yup from "yup";
+// import * as yup from "yup";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { reactive } from "vue";
-import AccountService from "@/services/admin/account.service";
+import AccountService from "@/services/client/accoun.service";
 // import Swal from "sweetalert2";
 //
 export default {
@@ -120,24 +108,6 @@ export default {
   },
 
   data() {
-    // const accountFormSchema = yup.object().shape({
-    //   name: yup
-    //     .string()
-    //     .required("Nhập họ và tên.")
-    //     .max(30, "Tiêu đề có nhiều nhất 30 ký tự."),
-    //   email: yup.string().email("E-mail không đúng.").required("Nhập email."),
-    //   phone: yup
-    //     .string()
-    //     .matches(
-    //       /((09|03|07|08|05)+([0-9]{8})\b)/g,
-    //       "Số điện thoại không hợp lệ."
-    //     ),
-    //   passwd: yup
-    //     .string()
-    //     .required("Nhập mật khẩu.")
-    //     .min(8, "Mật khẩu phải có ít nhất 8 ký tự."),
-    // });
-
     const account = reactive({
       first_name: "",
       last_name: "",
@@ -151,34 +121,26 @@ export default {
     });
     return {
       account,
-      // accountFormSchema,
+      emailExists: false,
     };
   },
 
   methods: {
     async submit(e) {
       e.preventDefault();
-      console.log(this.account);
-
       try {
         await AccountService.register(this.account);
-        // Swal.fire({
-        //   title: "Thành công!",
-        //   text: "Đăng ký tài khoản thành công",
-        //   icon: "success",
-        //   timer: 1000, // Tự đóng sau 2 giây (3000ms)
-        //   showConfirmButton: false, // Ẩn nút xác nhận
-        // });
-        // this.$router.push({ name: "login-account" });
+        console.log(this.account);
+        this.$router.push({ name: "login-client" });
       } catch (error) {
-        console.log(error);
+        console.log("hello", error);
       }
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 @import url("https://fonts.cdnfonts.com/css/margesh");
 
 .form-register {
@@ -196,8 +158,8 @@ export default {
   border: 2px solid #445b6d;
   border-radius: 20px;
   padding: 0;
-  transform: translateY(30px);
-  animation: fadeInDown 2s ease-out;
+  /*transform: translateY(30px);
+  animation: fadeInDown 2s ease-out;*/
 }
 
 .container .register-img {
@@ -244,7 +206,7 @@ export default {
   color: white;
   border: 1px solid #445b6d;
   box-sizing: border-box;
-  transition: background-color 0.3s ease-in-out;
+  /* transition: background-color 0.3s ease-in-out;*/
 }
 
 .btn-register:hover {
@@ -255,7 +217,7 @@ export default {
 .error-feedback {
   color: red;
 }
-
+/*
 @keyframes fadeInDown {
   from {
     opacity: 0;
@@ -265,5 +227,5 @@ export default {
     opacity: 1;
     transform: translateY(40);
   }
-}
+}*/
 </style>

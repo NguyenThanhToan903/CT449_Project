@@ -1,6 +1,9 @@
 const AdminModel = require("../../models/adminModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+const express = require("express");
+const router = express.Router();
 require("dotenv").config();
 exports.register = async (req, res) => {
   const {
@@ -40,9 +43,11 @@ exports.register = async (req, res) => {
     const hashedPasswd = await bcrypt.hash(password, salt);
     const adminExists = await AdminModel.findOne({ email });
     if (adminExists) {
-      return res
-        .status(400)
-        .json({ message: "Email already exists.", user: adminExists });
+      return res.status(400).json({
+        message: "Email already exists.",
+        user: adminExists,
+        emailStatus: true,
+      });
     }
     const newAdmin = new AdminModel({
       email,
@@ -105,6 +110,34 @@ exports.logout = async (req, res) => {
   });
 };
 
+exports.checkAuthentication = async (req, res) => {
+  try {
+    // Lấy token từ cookie
+    const token = req.cookies["jwt"];
+    if (!token) {
+      return res.json({ authenticated: false, message: "Unauthorized" });
+    }
+
+    // Xác minh token
+    const decodedToken = jwt.verify(token, process.env.KEY);
+    if (!decodedToken) {
+      return res.json({ authenticated: false, message: "Unauthorized" });
+    }
+
+    // Tìm người dùng trong cơ sở dữ liệu
+    const user = await AdminModel.findById(decodedToken._id);
+    if (!user) {
+      return res.json({ authenticated: false, message: "User not found" });
+    }
+
+    // Trả về dữ liệu người dùng nếu muốn
+    return res.json({ authenticated: true, user });
+  } catch (err) {
+    console.error("Error checking authentication:", err);
+    return { authenticated: false, message: "Internal server error" };
+  }
+};
+
 exports.getAdmin = async (req, res) => {
   try {
     const cookie = req.cookies["jwt"];
@@ -125,6 +158,23 @@ exports.getAdmin = async (req, res) => {
     return res.status(401).send({
       message: "unauthenticated",
     });
+  }
+};
+
+exports.findByEmail = async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const admin = await AdminModel.findOne({ email });
+
+    if (!admin) {
+      return res.json({ message: "Admin not found" });
+    }
+
+    res.status(200).json(admin);
+  } catch (error) {
+    console.error("Error finding admin by email:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -150,5 +200,21 @@ exports.accountManagement = async (req, res) => {
     return res.status(401).send({
       message: "unauthenticated",
     });
+  }
+};
+
+exports.checkEmailExists = async (req, res) => {
+  const { email } = req.body;
+  console.log(email);
+  try {
+    const admin = await AdminModel.findOne({ email });
+    if (admin) {
+      res.json({ user: user });
+    } else {
+      res.json({ position: "not found" });
+    }
+  } catch (error) {
+    console.error("Đã xảy ra lỗi:", error);
+    res.status(500).json({ error: "Đã xảy ra lỗi khi kiểm tra email." });
   }
 };

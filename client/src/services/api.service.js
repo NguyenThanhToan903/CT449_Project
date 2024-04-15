@@ -10,5 +10,6 @@ export default (baseURL) => {
   return axios.create({
     baseURL,
     ...commonConfig,
+    withCredentials: true, // Bật chia sẻ cookie giữa các nguồn gốc (CORS)
   });
 };

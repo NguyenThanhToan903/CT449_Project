@@ -1,42 +1,5 @@
 const Product = require("../../models/bookModel");
-const Search = require("../../Helper/Search");
-
-module.exports.index = async (req, res) => {
-  //Search
-  let search = Search(req.query);
-
-  const searchObj = {
-    deleted: false,
-  };
-
-  //Search
-  if (req.query.name) {
-    searchObj.name = search.regex;
-  }
-  // console.log("req.query.title", req.query.title);
-
-  //filterStatus
-  if (req.query.status) {
-    searchObj.status = req.query.status;
-  }
-
-  //filterCate
-  // if (req.query.category) {
-  //   searchObj.category = req.query.category;
-  // }
-
-  //sort
-  let sort = {};
-  if (req.query.sortKey && req.query.sortValue) {
-    sort[req.query.sortKey] = req.query.sortValue;
-  } else {
-    sort.position = "desc";
-  }
-
-  const products = await Product.find(searchObj).sort(sort);
-  res.send(products);
-};
-
+const ApiError = require("../../api-error");
 module.exports.create = async (req, res, next) => {
   let { name, author, price, stock, description, image, yearPublish } =
     req.body;
@@ -56,13 +19,6 @@ module.exports.create = async (req, res, next) => {
   price = parseInt(price);
   stock = parseInt(stock);
 
-  // if (req.body.position === "" || isNaN(req.body.position)) {
-  //   const countProducts = await Product.countDocuments();
-  //   req.body.position = countProducts + 1;
-  // } else {
-  //   req.body.position = parseInt(req.body.position);
-  // }
-
   if (req.body.priceNew === "" || isNaN(req.body.priceNew)) {
     req.body.priceNew = (
       (req.body.price * (100 - req.body.discountPercentage)) /
@@ -80,8 +36,8 @@ module.exports.create = async (req, res, next) => {
     yearPublish,
   });
   await product.save();
-  // console.log(name, author, price, stock, description, image, yearPublish);
   res.send(product);
+  // res.json({ message: "success" });
 };
 
 module.exports.update = async (req, res, next) => {
@@ -90,12 +46,8 @@ module.exports.update = async (req, res, next) => {
   try {
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
-    // req.body.position = parseInt(req.body.position);
-    req.body.deleted = req.body.deleted;
-    // req.body.priceNew =
-    //   (req.body.priceNew * (100 - req.body.discountPercentage)) / 100;
 
-    // console.log("new", req.body.priceNew);
+    req.body.deleted = req.body.deleted;
 
     await Product.updateOne(
       {
@@ -152,18 +104,24 @@ module.exports.editPrint = async (req, res, next) => {
     deleted: false,
   });
 
-  // console.log(product);
   res.send(product);
 };
 module.exports.detail = async (req, res) => {
-  // try{
   const id = req.params.id;
-
   const product = await Product.find({
     _id: id,
     deleted: false,
   });
-
   res.send(product);
   console.log(product);
+};
+
+module.exports.getAll = async (req, res, next) => {
+  try {
+    const books = await Product.find({});
+    res.json(books);
+  } catch (error) {
+    console.error("Error finding books:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
