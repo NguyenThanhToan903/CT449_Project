@@ -1,7 +1,6 @@
 <template>
   <div>
     <Header />
-    hello
     <router-view />
   </div>
 </template>
@@ -13,12 +12,6 @@ export default {
   components: {
     Header,
   },
-  // created() {
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     this.$store.commit("login");
-  //   }
-  // },
 };
 </script>
 

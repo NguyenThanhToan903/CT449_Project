@@ -8,10 +8,10 @@ const borrowSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  borrowDate: {
+  borrowedAt: {
     type: Date,
   },
-  returnDate: {
+  returnBy: {
     type: Date,
   },
   status: {

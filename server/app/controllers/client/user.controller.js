@@ -136,8 +136,8 @@ exports.findByEmail = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    res.status(200).json(user);
+    return user;
+    // res.status(200).json(user);
   } catch (error) {
     console.error("Error finding user by email:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -190,26 +190,6 @@ exports.checkBorrowStatus = async (req, res) => {
     // Logic kiểm tra trạng thái mượn sách
   } catch (error) {
     console.error("Error checking borrow status:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-exports.borrow = async (req, res) => {
-  try {
-    const token = req.cookies["jwt"];
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const decodedToken = jwt.verify(token, process.env.KEY);
-    if (!decodedToken) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const userId = decodedToken._id;
-    // Logic xử lý mượn sách
-  } catch (error) {
-    console.error("Error borrowing:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

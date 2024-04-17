@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const bookSchema = new mongoose.Schema(
   {
-    name: {
+    title: {
       type: String,
       required: true,
     },
@@ -28,6 +28,14 @@ const bookSchema = new mongoose.Schema(
       default: 0,
     },
     image: {
+      type: String,
+      required: true,
+    },
+    namePublish: {
+      type: String,
+      required: true,
+    },
+    addressPublish: {
       type: String,
       required: true,
     },

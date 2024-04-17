@@ -24,6 +24,11 @@ const ClientRoutes = [
         name: "login-client",
         component: () => import("@/views/client/Login.vue"),
       },
+      {
+        path: "/product/:id",
+        name: "product-detail",
+        component: () => import("@/components/DetailProduct.vue"),
+      },
     ],
   },
 ];
@@ -39,11 +44,11 @@ const AdminRoutes = [
         name: "admin-products",
         component: () => import("@/components/ProductItem.vue"),
       },
-      // {
-      //   path: "/login-account",
-      //   name: "login-admin",
-      //   component: () => import("@/views/admin/Login.vue"),
-      // },
+      {
+        path: "/page-admin/add-product",
+        name: "add-product",
+        component: () => import("@/views/AddProducts.vue"),
+      },
     ],
     // beforeEnter: (to, from, next) => {
     //   if (!authService.isLoggedIn()) {

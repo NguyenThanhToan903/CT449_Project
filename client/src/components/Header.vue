@@ -67,50 +67,6 @@
     </div>
   </div>
 </template>
-
-<!-- <script>
-import AccounService from "@/services/client/accoun.service";
-import AdminService from "@/services/admin/account.service";
-export default {
-  name: "HeaderClient",
-  computed: {
-    isLoggedIn() {
-      return this.$store.state.isAuthenticated;
-    },
-  },
-  created() {
-    this.checkAuthentication();
-  },
-  methods: {
-    async logout() {
-      if (this.$route.name !== "login-admin") {
-        if (this.$state.role === "admin") {
-          await AdminService.logout();
-          this.$store.commit("logout");
-        } else {
-          await AccounService.logout();
-          this.$store.commit("logout");
-          this.$router.push({ name: "client-Layout" });
-        }
-      }
-    },
-    async checkAuthentication() {
-      try {
-        // Gọi phương thức để kiểm tra xác thực từ service
-        const isAuthenticated = await AccounService.checkAuthentication();
-        // Cập nhật trạng thái xác thực
-        if (isAuthenticated.authenticated) {
-          this.$store.commit("login");
-        } else {
-          this.$store.commit("logout");
-        }
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-      }
-    },
-  },
-};
-</script> -->
 <script>
 import AccountService from "@/services/client/accoun.service";
 import AdminService from "@/services/admin/account.service";
@@ -133,9 +89,12 @@ export default {
       try {
         if (this.userRole === "admin") {
           await AdminService.logout();
+          localStorage.setItem("userRole", "");
+
           this.$store.commit("logout");
         } else {
           await AccountService.logout();
+          localStorage.setItem("userRole", "");
           this.$store.commit("logout");
         }
         this.$router.push({ name: "home" });

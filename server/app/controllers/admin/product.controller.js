@@ -1,43 +1,117 @@
 const Product = require("../../models/bookModel");
 const ApiError = require("../../api-error");
+// module.exports.create = async (req, res, next) => {
+//   let { name, author, price, stock, description, image, yearPublish } =
+//     req.body;
+
+//   if (
+//     !name ||
+//     !author ||
+//     !price ||
+//     !stock ||
+//     !description ||
+//     !image ||
+//     !yearPublish
+//   ) {
+//     return res.status(400).json({ message: "Please fill all fields" });
+//   }
+
+//   price = parseInt(price);
+//   stock = parseInt(stock);
+
+//   if (req.body.priceNew === "" || isNaN(req.body.priceNew)) {
+//     req.body.priceNew = (
+//       (req.body.price * (100 - req.body.discountPercentage)) /
+//       100
+//     ).toFixed(0);
+//   }
+
+//   const product = new Product({
+//     name,
+//     author,
+//     price,
+//     stock,
+//     description,
+//     image,
+//     yearPublish,
+//   });
+//   await product.save();
+//   res.send(product);
+//   // res.json({ message: "success" });
+// };
+
+// const BookModel = require("../models/Book");
+
 module.exports.create = async (req, res, next) => {
-  let { name, author, price, stock, description, image, yearPublish } =
-    req.body;
+  try {
+    const {
+      title,
+      author,
+      stock,
+      price,
+      description,
+      priceNew,
+      discountPercentage,
+      image,
+      namePublish,
+      addressPublish,
+      yearPublish,
+    } = req.body;
 
-  if (
-    !name ||
-    !author ||
-    !price ||
-    !stock ||
-    !description ||
-    !image ||
-    !yearPublish
-  ) {
-    return res.status(400).json({ message: "Please fill all fields" });
+    // Kiểm tra xem tất cả các trường dữ liệu cần thiết đã được điền vào hay chưa
+    if (
+      !title ||
+      !author ||
+      !stock ||
+      !price ||
+      !description ||
+      !image ||
+      !namePublish ||
+      !addressPublish ||
+      !yearPublish
+    ) {
+      return res.status(400).json({ message: "Please fill all fields" });
+    }
+
+    // Chuyển đổi giá và số lượng thành số nguyên
+    const parsedPrice = parseInt(price);
+    const parsedStock = parseInt(stock);
+
+    // Tính toán giá mới nếu không được cung cấp
+    let calculatedPriceNew = priceNew;
+    if (!calculatedPriceNew || isNaN(calculatedPriceNew)) {
+      calculatedPriceNew = (
+        (parsedPrice * (100 - discountPercentage)) /
+        100
+      ).toFixed(0);
+    }
+    console.log(calculatedPriceNew);
+
+    // Tạo cuốn sách mới
+    const book = new Product({
+      title,
+      author,
+      stock: parsedStock,
+      price: parsedPrice,
+      description,
+      priceNew: calculatedPriceNew,
+      discountPercentage,
+      image,
+      namePublish,
+      addressPublish,
+      yearPublish,
+    });
+
+    // Lưu cuốn sách vào cơ sở dữ liệu
+    await book.save();
+
+    // Trả về cuốn sách đã được tạo
+    res.status(201).json(book);
+  } catch (error) {
+    // Xử lý lỗi nếu có
+    console.error("Error creating book:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
-
-  price = parseInt(price);
-  stock = parseInt(stock);
-
-  if (req.body.priceNew === "" || isNaN(req.body.priceNew)) {
-    req.body.priceNew = (
-      (req.body.price * (100 - req.body.discountPercentage)) /
-      100
-    ).toFixed(0);
-  }
-
-  const product = new Product({
-    name,
-    author,
-    price,
-    stock,
-    description,
-    image,
-    yearPublish,
-  });
-  await product.save();
-  res.send(product);
-  // res.json({ message: "success" });
 };
 
 module.exports.update = async (req, res, next) => {

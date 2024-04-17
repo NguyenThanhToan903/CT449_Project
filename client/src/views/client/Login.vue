@@ -92,7 +92,6 @@ export default {
   right: 0;
   left: 0;
   top: 100px;
-  /* font-family: "Margesh Regular"; */
 }
 
 .container.register {
@@ -102,8 +101,6 @@ export default {
   border: 2px solid #445b6d;
   border-radius: 20px;
   padding: 0;
-  /*transform: translateY(30px);
-  animation: fadeInDown 2s ease-out;*/
 }
 
 .container .register-img {

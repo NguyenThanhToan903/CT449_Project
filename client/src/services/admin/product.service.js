@@ -25,7 +25,7 @@ class ProductService {
 
   async addProduct(productData) {
     try {
-      const response = await this.products.post("/", productData);
+      const response = await this.products.post("/create-product", productData);
       return response.data;
     } catch (error) {
       throw new Error("Error adding product");
