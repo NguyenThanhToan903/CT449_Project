@@ -1,45 +1,10 @@
-<!-- <nav> -->
-<!-- <template>
-  <div class="navbar">
-    <div class="logo">
-      <a href="#">MyLogo</a>
-    </div>
-    <div class="search-bar">
-      <input type="text" placeholder="Search..." />
-      <button type="submit">Search</button>
-    </div>
-    <div class="user-auth">
-      <div v-if="!isLoggedIn">
-        <span v-if="this.$route.name !== 'register-client'">
-          <router-link :to="{ name: 'register-client' }" class="nav-link"
-            >Đăng ký</router-link
-          >
-        </span>
-        <span
-          v-if="
-            this.$route.name !== 'login-client' &&
-            this.$route.name !== 'register-client'
-          "
-          >|</span
-        >
-        <span v-if="this.$route.name !== 'login-client'">
-          <router-link :to="{ name: 'login-client' }" class="nav-link"
-            >Đăng nhập</router-link
-          >
-        </span>
-      </div>
-      <div v-else>
-        <button @click="logout">Đăng xuất</button>
-      </div>
-    </div>
-  </div>
-</template> -->
-<!-- </nav> -->
-
 <template>
   <div class="navbar">
     <div class="logo">
-      <router-link :to="{ name: 'home' }">MyLogo</router-link>
+      <router-link v-if="userRole === 'client'" :to="{ name: 'home' }"
+        >MyLogo</router-link
+      >
+      <router-link v-else :to="{ name: 'admin-products' }">MyLogo</router-link>
     </div>
     <div class="search-bar">
       <input type="text" placeholder="Search..." />
@@ -73,6 +38,11 @@ import AdminService from "@/services/admin/account.service";
 
 export default {
   // name: "HeaderClient",
+  data() {
+    return {
+      user_Role: localStorage.getItem("userRole"),
+    };
+  },
   computed: {
     isLoggedIn() {
       return this.$store.state.isAuthenticated;
@@ -82,6 +52,7 @@ export default {
     },
   },
   mounted() {
+    console.log(this.userRole);
     this.checkAuthentication();
   },
   methods: {
@@ -89,12 +60,17 @@ export default {
       try {
         if (this.userRole === "admin") {
           await AdminService.logout();
-          localStorage.setItem("userRole", "");
+          // localStorage.setItem("userRole", "");
+          localStorage.removeItem("userRole");
+          localStorage.removeItem("email");
 
           this.$store.commit("logout");
         } else {
           await AccountService.logout();
-          localStorage.setItem("userRole", "");
+          // localStorage.setItem("userRole", "");
+          localStorage.removeItem("userRole");
+          localStorage.removeItem("email");
+
           this.$store.commit("logout");
         }
         this.$router.push({ name: "home" });

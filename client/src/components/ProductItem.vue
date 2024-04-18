@@ -1,40 +1,33 @@
 <template>
-  <div>
-    <div class="container">
-      <h1>Product List</h1>
-      <button
-        v-if="
-          isAdminOrEmployee &&
-          isLoggedIn &&
-          (!this.$route.name !== 'page-admin' || !this.$route.name !== 'home')
-        "
-        @click="goToCreateProduct"
+  <div class="container">
+    <h1>Product List</h1>
+    <button
+      v-if="
+        isAdminOrEmployee &&
+        isLoggedIn &&
+        !(this.$route.name === 'page-admin' || this.$route.name === 'home')
+      "
+      @click="goToCreateProduct"
+    >
+      Add Product
+    </button>
+    <div v-if="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+    <div v-else class="product-list">
+      <div
+        v-for="product in products"
+        :key="product._id"
+        class="product-item"
+        @click="check(product._id)"
       >
-        Add Product
-      </button>
-      <div v-if="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-      <div v-else class="product-list">
-        <div
-          v-for="product in products"
-          :key="product._id"
-          class="product-item"
-        >
-          <router-link
-            :to="{ name: 'product-detail', params: { id: product._id } }"
-          >
-            <div class="product-image">
-              <img :src="product.image" :alt="product.name" />
-            </div>
-            <div class="product-details">
-              <h2>{{ product.name }}</h2>
-              <p class="price">Price: {{ product.priceNew }}</p>
-              <p class="discount">
-                Discount: {{ product.discountPercentage }}%
-              </p>
-            </div>
-          </router-link>
+        <div class="product-image">
+          <img :src="product.image" :alt="product.name" />
+        </div>
+        <div class="product-details">
+          <h2>{{ product.name }}</h2>
+          <p class="price">Price: {{ product.priceNew }}</p>
+          <p class="discount">Discount: {{ product.discountPercentage }}%</p>
         </div>
       </div>
     </div>
@@ -43,12 +36,14 @@
 
 <script>
 import productService from "../services/client/product.service";
+import User from "../services/client/accoun.service";
 
 export default {
   data() {
     return {
       products: [],
       errorMessage: "",
+      user: "",
     };
   },
   computed: {
@@ -62,9 +57,9 @@ export default {
   },
   async mounted() {
     await this.getProducts();
+    await this.getUser();
     console.log(this.$route.name);
   },
-
   methods: {
     async getProducts() {
       try {
@@ -73,6 +68,26 @@ export default {
         this.errorMessage = "Failed to fetch products. Please try again later.";
         console.error("Error fetching products:", error.message);
       }
+    },
+    async getUser() {
+      const email = localStorage.getItem("email");
+      this.user = await User.findByEmail(email);
+      console.log("hello user", this.user.data._id);
+    },
+    async check(id) {
+      await this.getUser();
+      const book = await productService.getProductById(id);
+      console.log("check==", book._id, this.user.data._id);
+      const { message } = await productService.checkBorrow(
+        book._id,
+        this.user.data
+      );
+      console.log(message);
+      this.$router.push({
+        name: `product-detail`,
+        params: { id: book._id },
+        query: { message: message },
+      });
     },
     goToCreateProduct() {
       this.$router.push({

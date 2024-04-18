@@ -70,7 +70,7 @@
               v-model="account.password_confirm"
             />
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="position"> Positon </label>
             <Field
               type="text"
@@ -80,7 +80,7 @@
               placeholder="Position"
               v-model="account.position"
             />
-          </div>
+          </div> -->
         </div>
 
         <div class="form-group">
@@ -116,7 +116,7 @@ export default {
       address: "ád",
       sex: "nam",
       password: "",
-      position: "",
+      position: "client",
       password_confirm: "",
     });
     return {
@@ -130,7 +130,7 @@ export default {
       e.preventDefault();
       try {
         await AccountService.register(this.account);
-        console.log(this.account);
+        // console.log(this.account);
         this.$router.push({ name: "login-client" });
       } catch (error) {
         console.log("hello", error);

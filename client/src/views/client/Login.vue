@@ -66,17 +66,23 @@ export default {
 
       if (Admin.data.message === "Admin not found") {
         await AccountService.login(this.account);
-        this.$store.commit("login");
+        this.$store.commit("login", this.account.email);
         this.$store.commit("client");
+        localStorage.setItem("email", this.account.email);
         localStorage.setItem("userRole", "client");
-        this.$router.push({ name: "home" });
+        const redirect = this.$route.query.redirect || { name: "home" };
+        this.$router.push(redirect);
       } else {
         if (Admin.data.position === "admin") {
           await AdminService.login(this.account);
-          this.$store.commit("login");
+          this.$store.commit("login", this.account.email);
           this.$store.commit("admin");
+          localStorage.setItem("email", this.account.email);
           localStorage.setItem("userRole", "admin");
-          this.$router.push({ name: "admin-products" });
+          const redirect = this.$route.query.redirect || {
+            name: "admin-products",
+          };
+          this.$router.push(redirect);
         }
       }
     },

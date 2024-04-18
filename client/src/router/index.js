@@ -1,7 +1,8 @@
 import { createWebHistory, createRouter } from "vue-router";
-import LayoutAdmin from "@/views/admin/Layout.vue";
 import LayoutClient from "@/views/client/Layout.vue";
 import authService from "@/services/auth.service";
+import AccountService from "@/services/client/accoun.service";
+import AdminService from "@/services/admin/account.service";
 
 const ClientRoutes = [
   {
@@ -37,12 +38,12 @@ const AdminRoutes = [
   {
     path: "/page-admin",
     name: "admin-Layout",
-    component: LayoutAdmin,
+    component: LayoutClient,
     children: [
       {
         path: "",
         name: "admin-products",
-        component: () => import("@/components/ProductItem.vue"),
+        component: () => import("@/views/admin/BorrowList.vue"),
       },
       {
         path: "/page-admin/add-product",
@@ -50,13 +51,16 @@ const AdminRoutes = [
         component: () => import("@/views/AddProducts.vue"),
       },
     ],
-    // beforeEnter: (to, from, next) => {
-    //   if (!authService.isLoggedIn()) {
-    //     next("/page-admin/login-account");
-    //   } else {
-    //     next();
-    //   }
-    // },
+    async beforeEnter(to, from, next) {
+      let isAuthenticated;
+      isAuthenticated = await AdminService.checkAuthentication();
+      console.log("is", isAuthenticated.authenticated);
+      if (isAuthenticated.authenticated) {
+        next({ name: "login-client" });
+      } else {
+        next();
+      }
+    },
   },
 ];
 

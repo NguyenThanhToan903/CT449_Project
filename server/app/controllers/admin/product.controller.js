@@ -1,46 +1,7 @@
 const Product = require("../../models/bookModel");
 const ApiError = require("../../api-error");
-// module.exports.create = async (req, res, next) => {
-//   let { name, author, price, stock, description, image, yearPublish } =
-//     req.body;
-
-//   if (
-//     !name ||
-//     !author ||
-//     !price ||
-//     !stock ||
-//     !description ||
-//     !image ||
-//     !yearPublish
-//   ) {
-//     return res.status(400).json({ message: "Please fill all fields" });
-//   }
-
-//   price = parseInt(price);
-//   stock = parseInt(stock);
-
-//   if (req.body.priceNew === "" || isNaN(req.body.priceNew)) {
-//     req.body.priceNew = (
-//       (req.body.price * (100 - req.body.discountPercentage)) /
-//       100
-//     ).toFixed(0);
-//   }
-
-//   const product = new Product({
-//     name,
-//     author,
-//     price,
-//     stock,
-//     description,
-//     image,
-//     yearPublish,
-//   });
-//   await product.save();
-//   res.send(product);
-//   // res.json({ message: "success" });
-// };
-
-// const BookModel = require("../models/Book");
+const Date = require("../../models/data");
+const Borrow = require("../../models/borrowModel");
 
 module.exports.create = async (req, res, next) => {
   try {
@@ -114,9 +75,20 @@ module.exports.create = async (req, res, next) => {
   }
 };
 
+module.exports.createDayBorrow = async (req, res, next) => {
+  const time = req.body;
+  console.log(time);
+  const rangeTime = new Date({
+    name: time.name,
+    timeBorrow: time.rangeTime,
+  });
+  await rangeTime.save();
+  res.status(201).json(rangeTime);
+};
+
 module.exports.update = async (req, res, next) => {
   const id = req.params.id;
-  console.log(id);
+  // console.log(id);
   try {
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
@@ -198,4 +170,15 @@ module.exports.getAll = async (req, res, next) => {
     console.error("Error finding books:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+};
+
+module.exports.getBorrow = async (req, res, next) => {
+  console.log("getBorrow");
+  const { type } = req.body;
+  console.log("type: " + type);
+  let borrows = null;
+  if (type === "all") borrows = await Borrow.find({});
+  else borrows = await Borrow.find({ status: type });
+  console.log("borrows");
+  res.json(borrows);
 };

@@ -49,6 +49,17 @@ class ProductService {
       throw new Error(`Error deleting product with ID ${productId}`);
     }
   }
+
+  async getBorrow(data) {
+    try {
+      const response = await this.products.post(`/getBorrow`, data);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Failed to fetch borrow: ${error.message}`);
+    }
+  }
+
+  async;
 }
 
 export default new ProductService();

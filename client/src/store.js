@@ -13,7 +13,6 @@ export default createStore({
       state.user = user;
     },
     admin(state) {
-      // state.isAuthenticated = true;
       state.role = "admin";
     },
     client(state) {

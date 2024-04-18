@@ -18,10 +18,19 @@
             <button
               type="button"
               class="btn btn-success"
-              v-if="product.stock > 0"
+              v-if="this.status === ''"
+              @click="handleBorrowClick"
             >
               Mượn ngay
             </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              v-else-if="this.status === 'pending'"
+            >
+              Đang xử lý
+            </button>
+            <p v-else>Đã mượn</p>
             <button
               type="button"
               class="btn btn-success ms-1"
@@ -37,33 +46,76 @@
       </div>
     </div>
     <ProductItem />
+    <BorrowModal
+      v-if="showModal"
+      @close="showModal = false"
+      :product="product"
+      :user="user.data"
+    />
   </div>
 </template>
 
 <script>
 import ProductService from "@/services/admin/product.service";
+import Product from "@/services/client/product.service";
+import User from "@/services/client/accoun.service";
 import ProductItem from "./ProductItem.vue";
+import BorrowModal from "./BorrowModal.vue";
 
 export default {
   data() {
     return {
       product: null,
       errorMessage: "",
+      showModal: false,
+      status: "",
+      user: null, // Khai báo user
     };
   },
   components: {
     ProductItem,
+    BorrowModal,
   },
   methods: {
+    async getUser() {
+      const email = localStorage.getItem("email");
+      this.user = await User.findByEmail(email);
+    },
+    async getCheck() {
+      const message = this.$route.query.message;
+      console.log("message", message);
+      if (message === "pending") {
+        this.status = message;
+        console.log("status", this.status);
+      } else this.status = "";
+    },
+
     async getProduct() {
       try {
         this.product = await ProductService.getProductById(
           this.$route.params.id
         );
-        console.log(this.product);
+        await this.getCheck();
       } catch (error) {
         this.errorMessage = "Failed to fetch product. Please try again later.";
         console.error("Error fetching product:", error.message);
+      }
+    },
+    handleBorrowClick() {
+      if (
+        this.user &&
+        this.user.data &&
+        this.user.data.message === "User not found"
+      ) {
+        console.log("login");
+        const currentUrl = this.$route.fullPath; // Lưu trữ URL hiện tại
+        this.$router.push({
+          name: "login-client",
+          query: { redirect: currentUrl },
+        });
+      } else {
+        // Đã đăng nhập, hiển thị modal mượn
+        this.showModal = true;
       }
     },
   },
@@ -74,11 +126,14 @@ export default {
       }
     },
   },
+
   mounted() {
     this.getProduct();
+    this.getUser();
   },
 };
 </script>
+
 <style scoped>
 .container {
   max-width: 1200px;

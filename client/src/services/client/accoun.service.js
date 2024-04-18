@@ -26,6 +26,15 @@ class AccountService {
       throw new Error(error.response.data.message || error.message);
     }
   }
+  async findById(id) {
+    try {
+      const response = await this.User.get(`/find-by-id/${id}`);
+      console.log("user", response);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message || error.message);
+    }
+  }
 }
 
 export default new AccountService();

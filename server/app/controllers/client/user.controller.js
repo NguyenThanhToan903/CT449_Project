@@ -129,43 +129,18 @@ exports.logout = async (req, res) => {
 
 exports.findByEmail = async (req, res) => {
   const { email } = req.params;
-
+  // console.log(email);
   try {
     const user = await ReaderModel.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.json({ message: "User not found" });
     }
-    return user;
+    return res.send(user);
     // res.status(200).json(user);
   } catch (error) {
     console.error("Error finding user by email:", error);
     res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-exports.getUser = async (req, res) => {
-  try {
-    const token = req.cookies["jwt"];
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const decodedToken = jwt.verify(token, process.env.KEY);
-    if (!decodedToken) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const user = await ReaderModel.findById(decodedToken._id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const { password, ...userData } = user.toObject();
-    res.json(userData);
-  } catch (err) {
-    console.error("Error getting user:", err);
-    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -192,4 +167,10 @@ exports.checkBorrowStatus = async (req, res) => {
     console.error("Error checking borrow status:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+};
+
+exports.getUser = async (req, res) => {
+  const id = req.params.id;
+  const user = await ReaderModel.findById(id);
+  return res.send(user);
 };

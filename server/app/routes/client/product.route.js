@@ -7,4 +7,5 @@ const controller = require("../../controllers/client/product.controller");
 router.get("/:id", controller.getProduct);
 router.get("/", controller.getAll);
 router.post("/:id/borrow", controller.borrowBook);
+router.post("/:id/check", controller.checkBorrowBook);
 module.exports = router;

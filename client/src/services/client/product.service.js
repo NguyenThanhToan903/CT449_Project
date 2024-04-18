@@ -5,9 +5,18 @@ class ProductService {
     this.products = apiService(baseUrl);
   }
 
-  async borrowProduct(productId) {
+  async checkBorrow(productId, data) {
     try {
-      const response = await this.products.post(`/${productId}/borrow`);
+      const response = await this.products.post(`/${productId}/check`, data);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error borrowing product with ID ${productId}`);
+    }
+  }
+
+  async borrowProduct(productId, data) {
+    try {
+      const response = await this.products.post(`/${productId}/borrow`, data);
       return response.data;
     } catch (error) {
       throw new Error(`Error borrowing product with ID ${productId}`);
