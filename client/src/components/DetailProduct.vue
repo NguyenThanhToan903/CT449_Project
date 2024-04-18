@@ -69,7 +69,7 @@ export default {
       errorMessage: "",
       showModal: false,
       status: "",
-      user: null, // Khai báo user
+      user: null,
     };
   },
   components: {
@@ -83,13 +83,10 @@ export default {
     },
     async getCheck() {
       const message = this.$route.query.message;
-      console.log("message", message);
       if (message === "pending") {
         this.status = message;
-        console.log("status", this.status);
       } else this.status = "";
     },
-
     async getProduct() {
       try {
         this.product = await ProductService.getProductById(
@@ -107,14 +104,12 @@ export default {
         this.user.data &&
         this.user.data.message === "User not found"
       ) {
-        console.log("login");
-        const currentUrl = this.$route.fullPath; // Lưu trữ URL hiện tại
+        const currentUrl = this.$route.fullPath;
         this.$router.push({
           name: "login-client",
           query: { redirect: currentUrl },
         });
       } else {
-        // Đã đăng nhập, hiển thị modal mượn
         this.showModal = true;
       }
     },

@@ -51,16 +51,16 @@ const AdminRoutes = [
         component: () => import("@/views/AddProducts.vue"),
       },
     ],
-    async beforeEnter(to, from, next) {
-      let isAuthenticated;
-      isAuthenticated = await AdminService.checkAuthentication();
-      console.log("is", isAuthenticated.authenticated);
-      if (isAuthenticated.authenticated) {
-        next({ name: "login-client" });
-      } else {
-        next();
-      }
-    },
+    // async beforeEnter(to, from, next) {
+    //   let isAuthenticated;
+    //   isAuthenticated = await AdminService.checkAuthentication();
+    //   console.log("is", isAuthenticated.authenticated);
+    //   if (isAuthenticated.authenticated) {
+    //     next({ name: "login-client" });
+    //   } else {
+    //     next();
+    //   }
+    // },
   },
 ];
 

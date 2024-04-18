@@ -5,7 +5,7 @@
       v-if="
         isAdminOrEmployee &&
         isLoggedIn &&
-        !(this.$route.name === 'page-admin' || this.$route.name === 'home')
+        (this.$route.name === 'page-admin' || this.$route.name === 'home')
       "
       @click="goToCreateProduct"
     >

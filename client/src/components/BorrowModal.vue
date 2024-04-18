@@ -1,7 +1,9 @@
+<!-- BorrowModal.vue -->
 <template>
-  <div class="modal" :class="{ show: showModal }">
+  <div class="modal">
     <div class="modal-content">
       <h2>Xác nhận mượn sách</h2>
+      <p></p>
       <p>Bạn có chắc chắn muốn mượn sách này?</p>
       <div class="modal-buttons">
         <button @click="borrowBook">Đã Mượn</button>
@@ -14,9 +16,9 @@
 
 <script>
 import ProductService from "@/services/client/product.service";
-
 export default {
   name: "BorrowModal",
+
   props: {
     product: {
       type: null,
@@ -26,15 +28,12 @@ export default {
       type: null,
       required: true,
     },
-    showModal: {
-      type: Boolean,
-      required: true,
-    },
   },
+
   methods: {
     async borrowBook() {
       if (!this.user) {
-        const currentUrl = this.$route.fullPath;
+        const currentUrl = this.$route.fullPath; // Lưu trữ URL hiện tại
         this.$router.push({ name: "login", query: { redirect: currentUrl } });
         this.closeModal();
       } else {
@@ -52,6 +51,7 @@ export default {
       }
     },
     closeModal() {
+      // Đóng modal
       this.$emit("close");
     },
   },
@@ -69,26 +69,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity 0.3s ease;
-  opacity: 0;
-}
-
-.modal.show {
-  opacity: 1;
 }
 
 .modal-content {
   background-color: white;
   padding: 20px;
   border-radius: 5px;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  opacity: 0;
-  transform: translateY(-20px);
-}
-
-.modal.show .modal-content {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .modal-buttons {
@@ -97,20 +83,6 @@ export default {
 }
 
 button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #45a049;
+  margin-left: 10px;
 }
 </style>
