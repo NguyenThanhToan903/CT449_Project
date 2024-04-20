@@ -1,47 +1,75 @@
 <template>
-  <div class="navbar">
-    <div class="logo">
-      <router-link v-if="userRole === 'client'" :to="{ name: 'home' }"
-        >MyLogo</router-link
-      >
-      <router-link v-else :to="{ name: 'admin-products' }">MyLogo</router-link>
-    </div>
-    <div class="search-bar">
-      <input type="text" placeholder="Search..." />
-      <button type="submit">Search</button>
-    </div>
-    <div class="user-auth">
-      <div v-if="!isLoggedIn">
-        <span
-          v-if="!$route.meta.requiresAuth || $route.name !== 'register-client'"
-        >
-          <router-link :to="{ name: 'register-client' }" class="nav-link"
-            >Đăng ký</router-link
-          >
-        </span>
-        <span v-if="$route.name !== 'login-client'">|</span>
-        <span v-if="$route.name !== 'login-client'">
-          <router-link :to="{ name: 'login-client' }" class="nav-link"
-            >Đăng nhập</router-link
-          >
-        </span>
-      </div>
-      <div v-else>
-        <button @click="logout">Đăng xuất</button>
+  <div class="container-fluid bg-color">
+    <div class="header-main row justify-content-center">
+      <div class="col-md-10">
+        <div class="navbar navbar-expand navbar-dark">
+          <div class="logo">
+            <router-link
+              v-if="userRole === 'admin'"
+              :to="{ name: 'admin-products' }"
+              >BBook</router-link
+            >
+            <router-link v-else :to="{ name: 'home' }">BBook</router-link>
+          </div>
+          <div class="navbar-nav">
+            <p class="navbar-item" @click="navigateToBorrowedBooks('home')">
+              Trang chủ
+            </p>
+
+            <p
+              class="navbar-item"
+              v-if="userRole !== 'admin'"
+              @click="navigateToBorrowedBooks('hello')"
+            >
+              Sách đã mượn
+            </p>
+
+            <p class="navbar-item" @click="navigateToBorrowedBooks('about')">
+              Liên hệ
+            </p>
+          </div>
+          <div v-if="$route.name === 'home' && isLoggedIn">
+            <router-link :to="{ name: 'home' }" class="user-item"
+              >Tài khoản</router-link
+            >
+          </div>
+          <!-- <div> -->
+          <div v-if="!isLoggedIn" class="user-auth">
+            <span v-if="$route.name !== 'register-client'">
+              <router-link :to="{ name: 'register-client' }" class="navbar-link"
+                >Đăng ký</router-link
+              >
+            </span>
+            <span
+              v-if="
+                $route.name !== 'login-client' &&
+                $route.name !== 'register-client'
+              "
+              >|</span
+            >
+            <span v-if="$route.name !== 'login-client'">
+              <router-link :to="{ name: 'login-client' }" class="navbar-link"
+                >Đăng nhập</router-link
+              >
+            </span>
+          </div>
+          <div v-else>
+            <div class="logout" @click="logout">Đăng xuất</div>
+          </div>
+          <!-- </div> -->
+        </div>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import AccountService from "@/services/client/accoun.service";
 import AdminService from "@/services/admin/account.service";
 
 export default {
-  // name: "HeaderClient",
-  data() {
-    return {
-      user_Role: localStorage.getItem("userRole"),
-    };
+  props: {
+    user: Object,
   },
   computed: {
     isLoggedIn() {
@@ -52,7 +80,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.userRole);
     this.checkAuthentication();
   },
   methods: {
@@ -60,17 +87,13 @@ export default {
       try {
         if (this.userRole === "admin") {
           await AdminService.logout();
-          // localStorage.setItem("userRole", "");
           localStorage.removeItem("userRole");
           localStorage.removeItem("email");
-
           this.$store.commit("logout");
         } else {
           await AccountService.logout();
-          // localStorage.setItem("userRole", "");
           localStorage.removeItem("userRole");
           localStorage.removeItem("email");
-
           this.$store.commit("logout");
         }
         this.$router.push({ name: "home" });
@@ -98,89 +121,132 @@ export default {
             this.$store.commit("logout");
           }
         }
-        console.log("Authent", isAuthenticated);
       } catch (error) {
         console.error("Error checking authentication:", error);
       }
+    },
+
+    navigateToBorrowedBooks(direct) {
+      this.$router.push({ name: `${direct}` });
     },
   },
 };
 </script>
 
 <style scoped>
-/* Reset CSS */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.bg-color {
+  background-color: #12372a;
 }
 
-body {
-  font-family: Arial, sans-serif;
+.header-main {
+  width: 90%;
+  margin: auto;
 }
 
-/* Navbar styles */
 .navbar {
-  background-color: #333; /* Màu nền */
-  color: #fff; /* Màu chữ */
-  padding: 10px 20px;
+  justify-content: center;
+}
+
+.navbar-nav {
+  margin-right: auto;
+  margin-left: 8%;
   display: flex;
-  white-space: nowrap;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%; /* Chiều rộng 100% */
-  min-height: 72px;
 }
 
-.nav-link {
-  display: inline-block;
-}
-
-.logo {
-  padding-left: 50px;
-  margin-left: 100px;
-  margin-right: 100px;
-  /* flex: 1; */
-  padding-right: 50px;
-}
-
-/*.search-bar {
-  flex: 2;  Dãn ra càng nhiều càng tốt 
-}
-*/
-.user-auth {
-  flex: 1; /* Dãn ra càng nhiều càng tốt */
-  text-align: right; /* Căn phải */
-  width: 480px;
-}
-
-.logo a {
+.navbar-item,
+.logout,
+.user-item,
+.navbar-link {
+  padding-top: 10px;
+  margin: 0px;
+  margin-right: 40px;
   text-decoration: none;
-  color: #fff;
-  font-size: 24px;
-}
-
-.search-bar input[type="text"] {
-  padding: 5px;
-  margin-right: 10px;
-  width: 100%;
-  width: 700px;
-  /*border-radius: 3px;*/
-  border: none;
-}
-
-.search-bar button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 5px 50px;
-  max-width: 160px;
-  /*border-radius: 3px;*/
+  color: #fbfada;
+  font-family: "Lato", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  position: relative;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
-.user-auth a {
-  color: #fff;
+.navbar-item::before,
+.logout::before,
+.user-item::before,
+.navbar-link::before {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 0%;
+  height: 4px;
+  background-color: #90d26d;
+  transition: width 0.3s ease;
+}
+
+.logout::before {
+  background-color: #d28f6d !important;
+}
+
+.user-item::before {
+  background-color: #59d5e0 !important;
+}
+
+.navbar-item:hover::before,
+.logout:hover::before,
+.user-item:hover::before,
+.navbar-link:hover::before {
+  width: 100%;
+}
+.navbar-item:hover {
+  color: #90d26d;
+}
+
+.logout:hover {
+  color: #d28f6d;
+}
+.user-item:hover {
+  color: #59d5e0;
+}
+
+.navbar-link:hover {
+  color: #90d26d;
+}
+
+.logo a {
+  color: #fbfada;
+  font-size: 40px;
+  font-family: "Rubik Mono One", monospace;
+  font-weight: 400;
+  font-style: normal;
   text-decoration: none;
+}
+
+.search-bar {
+  width: 40%;
+  margin-right: 20%;
+}
+
+.search-bar input {
+  width: 80%;
+}
+
+.user-auth {
+  display: flex;
+  margin-right: 5%;
+}
+
+.user-item {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.navbar-link {
+  bottom: -8px;
+}
+
+.user-item span {
+  margin-right: 10px;
 }
 </style>

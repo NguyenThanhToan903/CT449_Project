@@ -1,21 +1,37 @@
 <template>
   <div>
     <Header />
-    <SideBar />
-    <router-view />
+    <div class="container">
+      <InputSearch class="input-search" @search="updateSearchQuery" />
+      <router-view :searchQuery="searchQuery" />
+    </div>
   </div>
 </template>
 
 <script>
 import Header from "../../components/Header.vue";
-import SideBar from "@/components/SideBar.vue";
+import InputSearch from "@/components/InputSearch.vue";
 export default {
-  name: "PageClient",
+  name: "LayoutClient",
   components: {
     Header,
-    SideBar,
+    InputSearch,
+  },
+  data() {
+    return {
+      searchQuery: "",
+    };
+  },
+  methods: {
+    updateSearchQuery(query) {
+      this.searchQuery = query;
+    },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.container {
+  margin-top: 50px;
+}
+</style>

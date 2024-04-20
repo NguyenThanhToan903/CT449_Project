@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="sidebar">
     <div class="sidebar-header">Admin Panel</div>
     <div class="menu">
@@ -6,7 +6,6 @@
         <li @click="navigateTo('admin-products')">Dashboard</li>
         <li @click="navigateTo('home')">Products</li>
         <li @click="navigateTo('users')">Users</li>
-        <!-- Thêm các mục menu khác nếu cần -->
       </ul>
     </div>
   </div>
@@ -26,16 +25,20 @@ export default {
 .sidebar {
   width: 250px;
   height: 100%;
-  background-color: #333;
+
   color: #fff;
   padding-top: 20px;
+  border-radius: 10px;
 }
 
 .sidebar-header {
-  font-size: 20px;
+  text-align: center;
+  font-size: 28px;
   font-weight: bold;
   text-align: center;
   margin-bottom: 20px;
+  background-color: #555;
+  border-radius: 10px;
 }
 
 .menu ul {
@@ -44,11 +47,22 @@ export default {
 }
 
 .menu ul li {
-  padding: 10px;
+  display: inline-block;
+  width: 100%;
+  padding-left: 40px;
   cursor: pointer;
+  border-radius: 10px;
 }
 
 .menu ul li:hover {
   background-color: #555;
 }
-</style>
+</style> -->
+
+<template></template>
+
+<script>
+export default {};
+</script>
+
+<style></style>

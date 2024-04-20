@@ -24,7 +24,7 @@ class ProductService {
   }
   async getAllProducts() {
     try {
-      const response = await this.products.get("/");
+      const response = await this.products.get(`/`);
       return response.data;
     } catch (error) {
       throw new Error("Error fetching products");

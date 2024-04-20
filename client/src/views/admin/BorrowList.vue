@@ -11,19 +11,22 @@
       <option value="return">Đã trả</option>
     </select>
     <ul class="borrowed-products-list">
-      <router-link
+      <div
         v-for="borrowedItem in borrowedProducts"
         :key="borrowedItem._id"
-        :to="'/product/' + borrowedItem.bookId"
         class="borrowed-item"
-        ><li>
-          <span class="book-info"
-            >{{ borrowedItem.bookName }} - {{ borrowedItem.bookAuthor }}</span
+      >
+        <li>
+          <router-link :to="'/product/' + borrowedItem.bookId" class="book-info"
+            >{{ borrowedItem.bookName }} -
+            {{ borrowedItem.bookAuthor }}</router-link
           >
-          <span class="borrowed-by">Mượn bởi: {{ borrowedItem.userName }}</span>
+          <router-link :to="'/user'" class="borrowed-by"
+            >Mượn bởi: {{ borrowedItem.userName }}</router-link
+          >
           <span class="status">Trạng thái: {{ borrowedItem.status }}</span>
         </li>
-      </router-link>
+      </div>
     </ul>
   </div>
 </template>

@@ -1,13 +1,10 @@
 import { createWebHistory, createRouter } from "vue-router";
 import LayoutClient from "@/views/client/Layout.vue";
-import authService from "@/services/auth.service";
-import AccountService from "@/services/client/accoun.service";
-import AdminService from "@/services/admin/account.service";
-
+import LayoutAdmin from "@/views/admin/Layout.vue"; // Thêm layout cho admin
+import store from "@/store"; // Import Vuex Store
 const ClientRoutes = [
   {
     path: "/",
-    name: "client-Layout",
     component: LayoutClient,
     children: [
       {
@@ -30,6 +27,18 @@ const ClientRoutes = [
         name: "product-detail",
         component: () => import("@/components/DetailProduct.vue"),
       },
+      {
+        path: "/helo",
+        name: "hello",
+        component: () => import("@/components/Borrowing.vue"),
+        beforeEnter: (to, from, next) => {
+          if (!store.state.isAuthenticated) {
+            next({ name: "login-client" });
+          } else {
+            next();
+          }
+        },
+      },
     ],
   },
 ];
@@ -37,8 +46,7 @@ const ClientRoutes = [
 const AdminRoutes = [
   {
     path: "/page-admin",
-    name: "admin-Layout",
-    component: LayoutClient,
+    component: LayoutAdmin,
     children: [
       {
         path: "",
@@ -46,21 +54,18 @@ const AdminRoutes = [
         component: () => import("@/views/admin/BorrowList.vue"),
       },
       {
-        path: "/page-admin/add-product",
+        path: "/page-admin/add-product", // Thay đổi path
         name: "add-product",
         component: () => import("@/views/AddProducts.vue"),
       },
     ],
-    // async beforeEnter(to, from, next) {
-    //   let isAuthenticated;
-    //   isAuthenticated = await AdminService.checkAuthentication();
-    //   console.log("is", isAuthenticated.authenticated);
-    //   if (isAuthenticated.authenticated) {
-    //     next({ name: "login-client" });
-    //   } else {
-    //     next();
-    //   }
-    // },
+    beforeEnter: (to, from, next) => {
+      if (!store.state.isAuthenticated) {
+        next({ name: "login-client" });
+      } else {
+        next();
+      }
+    },
   },
 ];
 

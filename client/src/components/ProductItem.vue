@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <h1>Product List</h1>
+  <div class="">
+    <!-- <h1>Product List</h1> -->
     <button
       v-if="
         isAdminOrEmployee &&
@@ -16,7 +16,7 @@
     </div>
     <div v-else class="product-list">
       <div
-        v-for="product in products"
+        v-for="product in filteredProducts"
         :key="product._id"
         class="product-item"
         @click="check(product._id)"
@@ -25,7 +25,7 @@
           <img :src="product.image" :alt="product.name" />
         </div>
         <div class="product-details">
-          <h2>{{ product.name }}</h2>
+          <h2>{{ product.title }}</h2>
           <p class="price">Price: {{ product.priceNew }}</p>
           <p class="discount">Discount: {{ product.discountPercentage }}%</p>
         </div>
@@ -39,6 +39,8 @@ import productService from "../services/client/product.service";
 import User from "../services/client/accoun.service";
 
 export default {
+  name: "productItem",
+  components: {},
   data() {
     return {
       products: [],
@@ -46,6 +48,10 @@ export default {
       user: "",
     };
   },
+  props: {
+    searchQuery: String,
+  },
+
   computed: {
     isAdminOrEmployee() {
       const userPosition = localStorage.getItem("userRole");
@@ -54,11 +60,26 @@ export default {
     isLoggedIn() {
       return this.$store.state.isAuthenticated;
     },
+
+    filteredProducts() {
+      if (!this.searchQuery) return this.products; // Kiểm tra xem searchQuery có tồn tại không
+      const query = this.searchQuery.toLowerCase();
+      return this.products.filter((product) =>
+        product.title.toLowerCase().includes(query)
+      );
+    },
   },
   async mounted() {
     await this.getProducts();
     await this.getUser();
-    console.log(this.$route.name);
+  },
+  watch: {
+    searchQuery(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.getProducts();
+        this.$router.push({ name: "home" });
+      }
+    },
   },
   methods: {
     async getProducts() {
@@ -66,7 +87,6 @@ export default {
         this.products = await productService.getAllProducts();
       } catch (error) {
         this.errorMessage = "Failed to fetch products. Please try again later.";
-        console.error("Error fetching products:", error.message);
       }
     },
     async getUser() {

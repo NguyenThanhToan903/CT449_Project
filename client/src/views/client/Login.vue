@@ -59,6 +59,12 @@ export default {
       account,
     };
   },
+  computed: {
+    isLoggedIn() {
+      return this.$store.state.isAuthenticated;
+    },
+  },
+
   methods: {
     async submit(e) {
       e.preventDefault();
