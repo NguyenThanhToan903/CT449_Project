@@ -69,6 +69,7 @@ export default {
       return this.$store.state.isAuthenticated;
     },
     totalPages() {
+      if (this.$route.name === "product-detail") this.productsPerPage = 4;
       return Math.ceil(this.filteredProducts.length / this.productsPerPage);
     },
     paginatedProducts() {

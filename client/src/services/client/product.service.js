@@ -38,5 +38,23 @@ class ProductService {
       throw new Error(`Error fetching product with ID ${productId}`);
     }
   }
+  async getBorrowedByUserId(userId) {
+    try {
+      const response = await this.products.get(`/borrowed/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        `Error fetching borrowed products for user with ID ${userId}`
+      );
+    }
+  }
+  async cancelBorrow(bookId) {
+    try {
+      const response = await this.products.put(`/cancel/${bookId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error cancelling borrow for book with ID ${bookId}`);
+    }
+  }
 }
 export default new ProductService();

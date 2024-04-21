@@ -74,3 +74,39 @@ module.exports.borrowBook = async (req, res, next) => {
     res.status(500).json({ message: "Đã có lỗi xảy ra khi mượn sách" });
   }
 };
+
+module.exports.borrowed = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const borrowedBooks = await BorrowedBook.find({ userId: userId });
+    res.json(borrowedBooks);
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách sách đã mượn:", error);
+    res
+      .status(500)
+      .json({ message: "Đã có lỗi xảy ra khi lấy danh sách sách đã mượn" });
+  }
+};
+
+module.exports.cancelBook = async (req, res, next) => {
+  try {
+    const bookId = req.params.id;
+    const borrowedBook = await BorrowedBook.findOne({ bookId });
+    if (!borrowedBook) {
+      return res
+        .status(404)
+        .json({ message: "Borrowed book not found", book: bookId });
+    }
+
+    if (borrowedBook.status === "returned") {
+      return res.status(400).json({ message: "Book already returned" });
+    }
+
+    borrowedBook.status = "cancelled";
+    await borrowedBook.save();
+    res.status(200).json({ message: "Book borrow cancelled successfully" });
+  } catch (error) {
+    console.error("Error cancelling book borrow:", error);
+    res.status(500).json({ message: "Error cancelling book borrow" });
+  }
+};

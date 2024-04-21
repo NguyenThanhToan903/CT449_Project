@@ -14,12 +14,12 @@ const ClientRoutes = [
       },
       {
         path: "/register",
-        name: "register-client",
+        name: "register",
         component: () => import("@/views/client/Register.vue"),
       },
       {
         path: "/login",
-        name: "login-client",
+        name: "login",
         component: () => import("@/views/client/Login.vue"),
       },
       {
@@ -28,12 +28,17 @@ const ClientRoutes = [
         component: () => import("@/components/DetailProduct.vue"),
       },
       {
-        path: "/helo",
-        name: "hello",
+        path: "/profile/:id",
+        name: "user-detail",
+        component: () => import("@/components/User.vue"),
+      },
+      {
+        path: "/borrowing",
+        name: "borrowing",
         component: () => import("@/components/Borrowing.vue"),
-        beforeEnter: (to, from, next) => {
+        beforeMount: (to, from, next) => {
           if (!store.state.isAuthenticated) {
-            next({ name: "login-client" });
+            next({ name: "login" });
           } else {
             next();
           }
@@ -51,17 +56,22 @@ const AdminRoutes = [
       {
         path: "",
         name: "admin-products",
-        component: () => import("@/views/admin/BorrowList.vue"),
+        component: () => import("@/components/BorrowList.vue"),
       },
       {
         path: "/add-product",
         name: "add-product",
         component: () => import("@/views/admin/AddProducts.vue"),
       },
+      {
+        path: "/edit/:id",
+        name: "product-edit",
+        component: () => import("@/components/EditProduct.vue"),
+      },
     ],
     beforeEnter: (to, from, next) => {
       if (!store.state.isAuthenticated) {
-        next({ name: "login-client" });
+        next({ name: "login" });
       } else {
         next();
       }

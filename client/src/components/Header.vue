@@ -18,37 +18,42 @@
 
             <p
               class="navbar-item"
-              v-if="userRole !== 'admin'"
-              @click="navigateToBorrowedBooks('hello')"
+              v-if="
+                userRole !== 'admin' &&
+                $route.name !== 'login' &&
+                $route.name !== 'register'
+              "
+              @click="navigateToBorrowedBooks('borrowing')"
             >
               Sách đã mượn
             </p>
 
-            <p class="navbar-item" @click="navigateToBorrowedBooks('about')">
-              Liên hệ
+            <p
+              class="navbar-item"
+              @click="navigateToBorrowedBooks('add-product')"
+              v-if="
+                userRole === 'admin' &&
+                $route.name !== 'add-product' &&
+                isLoggedIn &&
+                $route.name !== 'login' &&
+                $route.name !== 'register'
+              "
+            >
+              Thêm sách
             </p>
           </div>
           <div v-if="userRole !== 'admin' && isLoggedIn">
-            <router-link :to="{ name: 'home' }" class="user-item"
-              >Tài khoản</router-link
-            >
+            <p @click="profile(user.data._id)" class="user-item">Tài khoản</p>
           </div>
           <!-- <div> -->
           <div v-if="!isLoggedIn" class="user-auth">
-            <span v-if="$route.name !== 'register-client'">
-              <router-link :to="{ name: 'register-client' }" class="navbar-link"
+            <span v-if="$route.name !== 'register'">
+              <router-link :to="{ name: 'register' }" class="navbar-link"
                 >Đăng ký</router-link
               >
             </span>
-            <span
-              v-if="
-                $route.name !== 'login-client' &&
-                $route.name !== 'register-client'
-              "
-              >|</span
-            >
-            <span v-if="$route.name !== 'login-client'">
-              <router-link :to="{ name: 'login-client' }" class="navbar-link"
+            <span v-if="$route.name !== 'login'">
+              <router-link :to="{ name: 'login' }" class="navbar-link"
                 >Đăng nhập</router-link
               >
             </span>
@@ -68,8 +73,10 @@ import AccountService from "@/services/client/accoun.service";
 import AdminService from "@/services/admin/account.service";
 
 export default {
-  props: {
-    user: Object,
+  data() {
+    return {
+      user: null,
+    };
   },
   computed: {
     isLoggedIn() {
@@ -81,8 +88,20 @@ export default {
   },
   mounted() {
     this.checkAuthentication();
+    this.getUser();
   },
   methods: {
+    async profile(id) {
+      this.$router.push({
+        name: "user-detail",
+        params: { id: id },
+      });
+    },
+    async getUser() {
+      const email = localStorage.getItem("email");
+      this.user = await AccountService.findByEmail(email);
+      console.log("hello user", this.user);
+    },
     async logout() {
       try {
         if (this.userRole === "admin") {

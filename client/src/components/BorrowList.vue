@@ -24,7 +24,7 @@
           <router-link :to="'/user'" class="borrowed-by"
             >Mượn bởi: {{ borrowedItem.userName }}</router-link
           >
-          <span class="status">Trạng thái: {{ borrowedItem.status }}</span>
+          <p class="status">Trạng thái: {{ borrowedItem.status }}</p>
         </li>
       </div>
     </ul>
@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import Product from "../../services/admin/product.service";
-import User from "../../services/client/accoun.service";
+import Product from "../services/admin/product.service";
+import User from "../services/client/accoun.service";
 
 export default {
   data() {
@@ -52,21 +52,13 @@ export default {
           type: status,
         };
         const response = await Product.getBorrow(data);
-
-        // Lặp qua các mục đã mượn
         for (const borrowedItem of response) {
-          // Tìm kiếm thông tin chi tiết của người mượn
           const user = await User.findById(borrowedItem.userId);
-          // Gán tên người mượn vào borrowedItem
           borrowedItem.userName = user.last_name + " " + user.first_name;
-
-          // Tìm kiếm thông tin chi tiết của sách đã mượn
           const book = await Product.getProductById(borrowedItem.bookId);
-          // Gán tên sách và tác giả vào borrowedItem
           borrowedItem.bookName = book.title;
           borrowedItem.bookAuthor = book.author;
         }
-
         this.borrowedProducts = response;
       } catch (error) {
         console.error("Error fetching borrowed products:", error);
@@ -80,6 +72,7 @@ export default {
 .borrowed-products-container {
   max-width: 600px;
   margin: 0 auto;
+  height: calc(100vh - 80px);
 }
 
 .borrowed-products-list {
@@ -96,10 +89,12 @@ export default {
 
 .book-info {
   font-weight: bold;
+  text-decoration: none;
 }
 
 .borrowed-by,
 .status {
   color: #666;
+  text-decoration: none;
 }
 </style>

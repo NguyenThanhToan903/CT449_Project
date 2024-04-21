@@ -3,127 +3,129 @@
     <div class="add-container">
       <h2 class="add-header">Thêm sách mới</h2>
       <div class="add-main">
-        <div class="left-section">
-          <form @submit.prevent="addNewProduct" class="form">
-            <div class="form-group">
-              <label for="title">Tên sách:</label>
-              <input
-                id="title"
-                class="input-item"
-                type="text"
-                v-model="product.title"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <div class="form-group">
-              <label for="author">Tác giả:</label>
-              <input
-                id="author"
-                class="input-item"
-                type="text"
-                v-model="product.author"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <div class="form-group">
-              <label for="price">Giá:</label>
-              <input
-                id="price"
-                class="input-item"
-                type="number"
-                v-model="product.price"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <div class="form-group">
-              <label for="quatity">Số lượng:</label>
-              <input
-                id="quatity"
-                class="input-item"
-                type="number"
-                v-model="product.stock"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <div class="form-group">
-              <label for="description">Mô tả:</label>
-              <input
-                id="description"
-                class="input-item"
-                type="text"
-                v-model="product.description"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-          </form>
+        <div class="left-right-section">
+          <div class="left-section">
+            <form @submit.prevent="addNewProduct" class="form">
+              <div class="form-group">
+                <label for="title">Tên sách:</label>
+                <input
+                  id="title"
+                  class="input-item"
+                  type="text"
+                  v-model="product.title"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <div class="form-group">
+                <label for="author">Tác giả:</label>
+                <input
+                  id="author"
+                  class="input-item"
+                  type="text"
+                  v-model="product.author"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <div class="form-group">
+                <label for="price">Giá:</label>
+                <input
+                  id="price"
+                  class="input-item"
+                  type="number"
+                  v-model="product.price"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <div class="form-group">
+                <label for="quatity">Số lượng:</label>
+                <input
+                  id="quatity"
+                  class="input-item"
+                  type="number"
+                  v-model="product.stock"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <div class="form-group">
+                <label for="description">Mô tả:</label>
+                <input
+                  id="description"
+                  class="input-item"
+                  type="text"
+                  v-model="product.description"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+            </form>
+          </div>
+          <div class="right-section">
+            <form @submit.prevent="addNewProduct" class="form">
+              <div class="form-group">
+                <label for="discount">Giảm giá %:</label>
+                <input
+                  id="discount"
+                  class="input-item"
+                  type="number"
+                  v-model="product.discountPercentage"
+                  :min="0"
+                  :max="100"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <div class="form-group">
+                <label for="thumnail">Ảnh bìa (url):</label>
+                <input
+                  id="thumnail"
+                  class="input-item"
+                  type="text"
+                  v-model="product.image"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <div class="form-group">
+                <label for="publish-year">Năm xuất bản:</label>
+                <input
+                  id="publish-year"
+                  class="input-item"
+                  type="number"
+                  v-model="product.yearPublish"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <div class="form-group">
+                <label for="name-publish">Tên nhà xuất bản:</label>
+                <input
+                  id="name-publish"
+                  class="input-item"
+                  type="text"
+                  v-model="product.namePublish"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <div class="form-group">
+                <label for="address-publish">Địa chỉ nhà xuất bản:</label>
+                <input
+                  id="address-publish"
+                  class="input-item"
+                  type="text"
+                  v-model="product.addressPublish"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+            </form>
+          </div>
         </div>
-        <div class="right-section">
-          <form @submit.prevent="addNewProduct" class="form">
-            <div class="form-group">
-              <label for="discount">Giảm giá %:</label>
-              <input
-                id="discount"
-                class="input-item"
-                type="number"
-                v-model="product.discountPercentage"
-                :min="0"
-                :max="100"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <div class="form-group">
-              <label for="thumnail">Ảnh bìa (url):</label>
-              <input
-                id="thumnail"
-                class="input-item"
-                type="text"
-                v-model="product.image"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <div class="form-group">
-              <label for="publish-year">Năm xuất bản:</label>
-              <input
-                id="publish-year"
-                class="input-item"
-                type="number"
-                v-model="product.yearPublish"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <div class="form-group">
-              <label for="name-publish">Tên nhà xuất bản:</label>
-              <input
-                id="name-publish"
-                class="input-item"
-                type="text"
-                v-model="product.namePublish"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <div class="form-group">
-              <label for="address-publish">Địa chỉ nhà xuất bản:</label>
-              <input
-                id="address-publish"
-                class="input-item"
-                type="text"
-                v-model="product.addressPublish"
-                required
-              />
-              <div class="input-line"></div>
-            </div>
-            <button type="submit" class="btn">Thêm</button>
-          </form>
-        </div>
+        <button type="submit" class="btn button-section">Thêm</button>
       </div>
     </div>
   </div>
@@ -170,7 +172,7 @@ export default {
 
 <style scoped>
 .add-product {
-  max-width: 800px;
+  max-width: 1200px;
   height: 100vh;
   margin: 0px auto;
 }
@@ -183,17 +185,19 @@ export default {
   text-transform: uppercase;
   font-size: 32px;
   margin-bottom: 5px;
+  font-family: Helvetica, sans-serif;
   color: #436850;
 }
 .add-main {
+  background-color: #fffeee;
+}
+.left-right-section {
   display: flex;
   padding: 10px;
   margin-top: 20px;
   border-radius: 2px;
-  background-color: #fbfada;
   justify-content: space-between;
 }
-
 .left-section {
   width: 48%;
 }
@@ -210,6 +214,7 @@ h2 {
 .form-group {
   position: relative;
   margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 label {
@@ -223,6 +228,7 @@ label {
   width: 100%;
   border: none;
   height: 32px;
+  margin-left: 20px;
   position: relative;
   outline: none;
   background-color: #fffff900;
@@ -232,7 +238,7 @@ label {
   content: "";
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 20px;
   width: 0;
   height: 2px;
   background-color: #12372a;
@@ -241,6 +247,21 @@ label {
 
 .input-item:hover + .input-line,
 .input-item:focus-visible + .input-line {
-  width: 100%;
+  width: 400px;
+}
+
+.button-section {
+  display: block;
+  width: 150px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>

@@ -1,26 +1,26 @@
-<!-- DetailProduct
 <template>
-  <div class="container">
+  <div>
     <div class="detailBox">
       <div v-if="product" class="detail-box1">
         <img :src="product.image" alt="Product Image" />
       </div>
       <div v-if="product" class="detail-box2">
         <div class="box-detail">
-          <h3 class="box2 title">{{ product.title }}</h3>
+          <h3 v-if="product" class="bookDetail-title">{{ product.title }}</h3>
           <div class="box2 des">Mô tả: {{ product.description }}</div>
           <div class="box2 price">Giá: {{ product.price }} đ</div>
           <div class="box2 discount">
             Giảm giá: {{ product.discountPercentage }}%
           </div>
-          <div class="box2 sold">Đã Mượn: {{ product.sold }}</div>
           <div class="box2 stock">Còn lại: {{ product.stock }}</div>
           <div class="btn-group">
-            <button v-if="isAdmin" @click="editProduct">Chỉnh sửa</button>
+            <button class="btn button-edit" v-if="isAdmin" @click="editProduct">
+              Chỉnh sửa
+            </button>
             <button
               type="button"
               class="btn btn-success"
-              v-if="this.status === '' && !isBorrowing"
+              v-if="status === '' && !isBorrowing && !isAdmin"
               @click="handleBorrowClick"
             >
               Mượn ngay
@@ -28,15 +28,15 @@
             <button
               type="button"
               class="btn btn-success"
-              v-else-if="this.status === 'pending' || isBorrowing"
+              v-else-if="(status === 'pending' || isBorrowing) && !isAdmin"
             >
               Đang xử lý
             </button>
-            <p v-else>Đã mượn</p>
+            <p v-else-if="!isAdmin">Đã mượn</p>
             <button
               type="button"
               class="btn btn-success ms-1"
-              v-if="product.stock > 0"
+              v-if="product.stock > 0 && !isAdmin"
             >
               Mua
             </button>
@@ -47,195 +47,7 @@
         <p>Không có thông tin sản phẩm.</p>
       </div>
     </div>
-    <ProductItem />
-    <BorrowModal
-      v-if="showModal"
-      @close="showModal = false"
-      :product="product"
-      :user="user.data"
-      :isBorrowing="status"
-    />
-  </div>
-</template>
-
-<script>
-import ProductService from "@/services/admin/product.service";
-import User from "@/services/client/accoun.service";
-import ProductItem from "./ProductItem.vue";
-import BorrowModal from "./BorrowModal.vue";
-
-export default {
-  data() {
-    return {
-      product: null,
-      errorMessage: "",
-      showModal: false,
-      status: "",
-      user: null,
-      isBorrowing: false,
-    };
-  },
-  components: {
-    ProductItem,
-    BorrowModal,
-  },
-  computed: {
-    isAdmin() {
-      return localStorage.getItem("userRole") === "admin";
-    },
-  },
-  methods: {
-    async getUser() {
-      const email = localStorage.getItem("email");
-      this.user = await User.findByEmail(email);
-    },
-    async getCheck() {
-      const message = this.$route.query.message;
-      if (message === "pending") {
-        this.status = message;
-      } else this.status = "";
-    },
-    async getProduct() {
-      try {
-        this.product = await ProductService.getProductById(
-          this.$route.params.id
-        );
-        await this.getCheck();
-      } catch (error) {
-        this.errorMessage = "Failed to fetch product. Please try again later.";
-        console.error("Error fetching product:", error.message);
-      }
-    },
-    handleBorrowClick() {
-      if (
-        this.user &&
-        this.user.data &&
-        this.user.data.message === "User not found"
-      ) {
-        const currentUrl = this.$route.fullPath;
-        this.$router.push({
-          name: "login-client",
-          query: { redirect: currentUrl },
-        });
-      } else {
-        // this.isBorrowing = true;
-        this.showModal = true;
-      }
-    },
-    editProduct() {
-      this.$router.push({
-        name: "edit-product",
-        params: { id: this.product._id },
-      });
-    },
-  },
-  watch: {
-    "$route.params.id": function (newId, oldId) {
-      if (newId !== oldId) {
-        this.getProduct();
-      }
-    },
-  },
-  mounted() {
-    this.getProduct();
-    this.getUser();
-  },
-};
-</script>
-
-<style scoped>
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.detailBox {
-  border: 2px solid #0a6f8c;
-  border-radius: 10px;
-  display: flex;
-  padding: 30px;
-}
-
-.detail-box1 {
-  width: 400px;
-  margin-right: 30px;
-}
-
-.detail-box1 img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-.detail-box2 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.box2 {
-  margin-bottom: 20px;
-}
-
-.btn-group {
-  margin-top: 20px;
-}
-</style> -->
-
-<!-- ProductDetail.vue -->
-<template>
-  <div class="container">
-    <div class="detailBox">
-      <div v-if="product" class="detail-box1">
-        <img :src="product.image" alt="Product Image" />
-      </div>
-      <div v-if="product" class="detail-box2">
-        <div class="box-detail">
-          <h3 class="box2 title">{{ product.title }}</h3>
-          <div class="box2 des">Mô tả: {{ product.description }}</div>
-          <div class="box2 price">Giá: {{ product.price }} đ</div>
-          <div class="box2 discount">
-            Giảm giá: {{ product.discountPercentage }}%
-          </div>
-          <div class="box2 sold">Đã Mượn: {{ product.sold }}</div>
-          <div class="box2 stock">Còn lại: {{ product.stock }}</div>
-          <div class="btn-group">
-            <!-- Thêm nút "Chỉnh sửa" -->
-            <button v-if="isAdmin" @click="editProduct">Chỉnh sửa</button>
-            <button
-              type="button"
-              class="btn btn-success"
-              v-if="status === '' && !isBorrowing"
-              @click="handleBorrowClick"
-            >
-              Mượn ngay
-            </button>
-            <button
-              type="button"
-              class="btn btn-success"
-              v-else-if="status === 'pending' || isBorrowing"
-            >
-              Đang xử lý
-            </button>
-            <p v-else>Đã mượn</p>
-            <button
-              type="button"
-              class="btn btn-success ms-1"
-              v-if="product.stock > 0"
-            >
-              Mua
-            </button>
-          </div>
-        </div>
-      </div>
-      <div v-else>
-        <p>Không có thông tin sản phẩm.</p>
-      </div>
-    </div>
-    <ProductItem />
+    <ProductItem class="product-list-detail" />
     <BorrowModal
       v-if="showModal"
       @close="showModal = false"
@@ -302,7 +114,7 @@ export default {
       ) {
         const currentUrl = this.$route.fullPath;
         this.$router.push({
-          name: "login-client",
+          name: "login",
           query: { redirect: currentUrl },
         });
       } else {
@@ -311,7 +123,7 @@ export default {
     },
     editProduct() {
       this.$router.push({
-        name: "edit-product",
+        name: "product-edit",
         params: { id: this.product._id },
       });
     },
@@ -340,37 +152,103 @@ export default {
   padding: 20px;
 }
 
-.detailBox {
-  border: 2px solid #0a6f8c;
-  border-radius: 10px;
-  display: flex;
-  padding: 30px;
-}
-
-.detail-box1 {
-  width: 400px;
-  margin-right: 30px;
-}
-
-.detail-box1 img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
 .detail-box2 {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding-top: 20px;
+}
+
+.bookDetail-title {
+  font-size: 42px;
+  font-family: Helvetica, sans-serif;
+  text-transform: uppercase;
+  font-weight: 500;
+  position: relative;
+  color: #12372a;
+}
+
+.bookDetail-title::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #adbc9f;
+  z-index: 1;
+}
+
+.detailBox {
+  display: flex;
+  margin-left: 10px;
+  margin-right: 10px;
+  background-color: #fffeee;
+  padding: 10px;
+}
+
+.detail-box1 {
+}
+
+.detail-box1 img {
+}
+
+.box-detail {
+  padding-left: 30px;
 }
 
 .box2 {
-  margin-bottom: 20px;
+  margin-top: 20px;
+  font-family: "Work Sans", sans-serif;
 }
 
 .btn-group {
   margin-top: 20px;
+}
+
+.product-list-detail {
+  margin-top: 30px;
+}
+
+.btn {
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.button-edit {
+  background-color: #436850;
+}
+
+.btn-success {
+  background-color: #4caf50;
+}
+
+.btn-success:hover {
+  background-color: #45a049;
+}
+
+.btn-success:active {
+  background-color: #45a049;
+}
+
+.btn-ms-1 {
+  background-color: #f44336;
+}
+
+.btn-ms-1:hover {
+  background-color: #da190b;
+}
+
+.btn-ms-1:active {
+  background-color: #da190b;
 }
 </style>
