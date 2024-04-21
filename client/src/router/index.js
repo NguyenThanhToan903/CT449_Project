@@ -54,9 +54,9 @@ const AdminRoutes = [
         component: () => import("@/views/admin/BorrowList.vue"),
       },
       {
-        path: "/page-admin/add-product", // Thay đổi path
+        path: "/add-product",
         name: "add-product",
-        component: () => import("@/views/AddProducts.vue"),
+        component: () => import("@/views/admin/AddProducts.vue"),
       },
     ],
     beforeEnter: (to, from, next) => {

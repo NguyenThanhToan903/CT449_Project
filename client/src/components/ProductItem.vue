@@ -1,6 +1,5 @@
 <template>
   <div class="">
-    <!-- <h1>Product List</h1> -->
     <button
       v-if="
         isAdminOrEmployee &&
@@ -16,7 +15,7 @@
     </div>
     <div v-else class="product-list">
       <div
-        v-for="product in filteredProducts"
+        v-for="product in paginatedProducts"
         :key="product._id"
         class="product-item"
         @click="check(product._id)"
@@ -31,21 +30,30 @@
         </div>
       </div>
     </div>
+    <Pagination
+      :total-pages="totalPages"
+      :current-page="currentPage"
+      @page-changed="changePage"
+    />
   </div>
 </template>
 
 <script>
 import productService from "../services/client/product.service";
 import User from "../services/client/accoun.service";
-
+import Pagination from "./Pagination.vue";
 export default {
   name: "productItem",
-  components: {},
+  components: {
+    Pagination,
+  },
   data() {
     return {
       products: [],
       errorMessage: "",
       user: "",
+      currentPage: 1,
+      productsPerPage: 8,
     };
   },
   props: {
@@ -60,9 +68,17 @@ export default {
     isLoggedIn() {
       return this.$store.state.isAuthenticated;
     },
+    totalPages() {
+      return Math.ceil(this.filteredProducts.length / this.productsPerPage);
+    },
+    paginatedProducts() {
+      const startIndex = (this.currentPage - 1) * this.productsPerPage;
+      const endIndex = startIndex + this.productsPerPage;
+      return this.filteredProducts.slice(startIndex, endIndex);
+    },
 
     filteredProducts() {
-      if (!this.searchQuery) return this.products; // Kiểm tra xem searchQuery có tồn tại không
+      if (!this.searchQuery) return this.products;
       const query = this.searchQuery.toLowerCase();
       return this.products.filter((product) =>
         product.title.toLowerCase().includes(query)
@@ -76,8 +92,14 @@ export default {
   watch: {
     searchQuery(newValue, oldValue) {
       if (newValue !== oldValue) {
-        this.getProducts();
         this.$router.push({ name: "home" });
+        this.currentPage = 1;
+        this.getProducts();
+      }
+    },
+    currentPage(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.getProducts();
       }
     },
   },
@@ -93,6 +115,9 @@ export default {
       const email = localStorage.getItem("email");
       this.user = await User.findByEmail(email);
       console.log("hello user", this.user.data._id);
+    },
+    changePage(page) {
+      this.currentPage = page;
     },
     async check(id) {
       await this.getUser();
@@ -122,11 +147,13 @@ export default {
 .product-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
 }
 .product-item {
   width: calc(25% - 20px); /* Số lượng mục sản phẩm trên mỗi hàng */
   margin-bottom: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
+
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);

@@ -23,7 +23,6 @@ export default {
 }
 
 .page {
-  height: 100vh;
   background-color: #adbc9f;
 }
 </style>

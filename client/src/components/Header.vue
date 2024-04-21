@@ -28,7 +28,7 @@
               Liên hệ
             </p>
           </div>
-          <div v-if="$route.name === 'home' && isLoggedIn">
+          <div v-if="userRole !== 'admin' && isLoggedIn">
             <router-link :to="{ name: 'home' }" class="user-item"
               >Tài khoản</router-link
             >

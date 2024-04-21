@@ -1,14 +1,15 @@
 <template>
-  <div v-if="isLoggedIn && isHome" class="search-container" :class="{}">
-    <input
-      type="text"
-      v-model="searchQuery"
-      placeholder="Nhập từ khóa tìm kiếm"
-      class="search-input"
-      @input="emitSearchQuery"
-    />
-
-    <p class="search-button">Tìm kiếm</p>
+  <div v-if="$route.name === 'home'" class="search-container">
+    <div class="input-container">
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Nhập từ khóa tìm kiếm"
+        class="search-input"
+        @input="emitSearchQuery"
+      />
+      <div class="input-line"></div>
+    </div>
   </div>
 </template>
 
@@ -17,16 +18,7 @@ export default {
   data() {
     return {
       searchQuery: "",
-      is: false,
     };
-  },
-  computed: {
-    isLoggedIn() {
-      return this.$store.state.isAuthenticated;
-    },
-    isHome() {
-      return this.$route.name === "home";
-    },
   },
   methods: {
     emitSearchQuery() {
@@ -44,26 +36,32 @@ export default {
   margin-bottom: 20px;
 }
 
+.input-container {
+  position: relative;
+}
+
 .search-input {
   width: 220px;
   border: none;
   height: 32px;
   position: relative;
+  outline: none;
+  background-color: #fffff900;
 }
 
-.search-input::before {
-  content: "";
+.input-line {
   position: absolute;
-  bottom: -20px;
+  content: "";
   left: 0;
   width: 0%;
   height: 4px;
-  background-color: #90d26d;
-  transition: width 0.3s ease;
+  z-index: 1;
+  background-color: #12372a;
+  transition: width 0.5s ease;
 }
 
-.search-input:focus::before {
-  width: 100%;
+.input-container:hover .input-line {
+  width: 95%;
 }
 
 .search-button {

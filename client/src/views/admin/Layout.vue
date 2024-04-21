@@ -1,14 +1,7 @@
 <template>
   <Header />
   <div class="container">
-    <div class="row">
-      <div class="col-md-2">
-        <SideBar />
-      </div>
-      <div class="col-md-10">
-        <router-view></router-view>
-      </div>
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 
