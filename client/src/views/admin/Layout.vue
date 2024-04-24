@@ -1,6 +1,6 @@
 <template>
-  <Header />
-  <div class="container">
+  <Header class="header" />
+  <div class="container-admin">
     <router-view></router-view>
   </div>
 </template>
@@ -18,5 +18,16 @@ export default {
 Header {
   width: 100%;
   background-color: #fff;
+}
+.container-admin {
+  padding-top: 20px;
+  margin-top: 76px;
+  position: relative;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  z-index: 999;
 }
 </style>

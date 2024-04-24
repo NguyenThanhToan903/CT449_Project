@@ -4,14 +4,9 @@
       <div class="col-md-10">
         <div class="navbar navbar-expand navbar-dark">
           <div class="logo">
-            <router-link
-              v-if="userRole === 'admin'"
-              :to="{ name: 'admin-products' }"
-              >BBook</router-link
-            >
-            <router-link v-else :to="{ name: 'home' }">BBook</router-link>
+            <router-link :to="{ name: 'home' }">BBook</router-link>
           </div>
-          <div class="navbar-nav">
+          <div class="navbar-nav" :class="{ Admin: userRole === 'admin' }">
             <p class="navbar-item" @click="navigateToBorrowedBooks('home')">
               Trang chủ
             </p>
@@ -40,6 +35,19 @@
               "
             >
               Thêm sách
+            </p>
+            <p
+              class="navbar-item"
+              @click="navigateToBorrowedBooks('admin-products')"
+              v-if="
+                userRole === 'admin' &&
+                $route.name !== 'admin-products' &&
+                isLoggedIn &&
+                $route.name !== 'login' &&
+                $route.name !== 'register'
+              "
+            >
+              Quản lý mượn
             </p>
           </div>
           <div v-if="userRole !== 'admin' && isLoggedIn">
@@ -92,6 +100,7 @@ export default {
   },
   methods: {
     async profile(id) {
+      console.log(id);
       this.$router.push({
         name: "user-detail",
         params: { id: id },
@@ -100,7 +109,6 @@ export default {
     async getUser() {
       const email = localStorage.getItem("email");
       this.user = await AccountService.findByEmail(email);
-      console.log("hello user", this.user);
     },
     async logout() {
       try {
@@ -146,7 +154,10 @@ export default {
     },
 
     navigateToBorrowedBooks(direct) {
-      this.$router.push({ name: `${direct}` });
+      const isUser = localStorage.getItem("email");
+      if (!isUser && direct !== "home") {
+        this.$router.push({ name: "login" });
+      } else this.$router.push({ name: `${direct}` });
     },
   },
 };
@@ -195,7 +206,7 @@ export default {
 .navbar-link::before {
   content: "";
   position: absolute;
-  bottom: -20px;
+  bottom: -21px;
   left: 0;
   width: 0%;
   height: 4px;

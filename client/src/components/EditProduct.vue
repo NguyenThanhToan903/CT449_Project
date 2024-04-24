@@ -151,7 +151,6 @@ export default {
       addressPublish: "",
     });
 
-    // Function to fetch product details
     const getProductDetails = async () => {
       try {
         const response = await ProductService.getProductById(productId);
@@ -161,20 +160,16 @@ export default {
       }
     };
 
-    // Function to edit product
     const editProduct = async () => {
       try {
         const response = await ProductService.editProduct(productId, product);
         console.log("Product edited:", response);
-        router.push({ name: "home" });
+        router.push({ name: "product-detail", params: { id: productId } });
       } catch (error) {
         console.error("Error editing product:", error);
       }
     };
-
-    // Fetch product details on component mount
     getProductDetails();
-
     return {
       product,
       editProduct,
@@ -237,7 +232,7 @@ label {
 }
 
 .input-item {
-  width: 400px;
+  width: 400px !important;
   border: none;
   height: 32px;
   margin-left: 20px;

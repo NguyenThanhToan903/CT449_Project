@@ -1,105 +1,10 @@
-<!-- BorrowModal.vue -->
-<!-- <template>
-  <div class="modal">
-    <div class="modal-content">
-      <h2>Xác nhận mượn sách</h2>
-      <p></p>
-      <p>Bạn có chắc chắn muốn mượn sách này?</p>
-      <div class="modal-buttons">
-        <button @click="borrowBook">Đã Mượn</button>
-        <button @click="borrowBook">Mượn</button>
-        <button @click="closeModal">Hủy</button>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script>
-import ProductService from "@/services/client/product.service";
-export default {
-  name: "BorrowModal",
-
-  props: {
-    product: {
-      type: null,
-      required: true,
-    },
-    user: {
-      type: null,
-      required: true,
-    },
-    isBorrowing: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
-  methods: {
-    async borrowBook() {
-      if (!this.user) {
-        const currentUrl = this.$route.fullPath; // Lưu trữ URL hiện tại
-        this.$router.push({ name: "login", query: { redirect: currentUrl } });
-        this.closeModal();
-      } else {
-        try {
-          const data = {
-            email: this.user.email,
-            date: "7 ngày",
-          };
-          await ProductService.borrowProduct(this.product._id, data);
-          console.log("Mượn sách thành công!");
-          // Kích hoạt sự kiện chuyển trạng thái
-          this.$emit("borrowed", true);
-          this.closeModal();
-        } catch (error) {
-          console.error("Lỗi khi mượn sách:", error.message);
-        }
-      }
-    },
-    closeModal() {
-      // Đóng modal
-      this.$emit("close");
-    },
-  },
-};
-</script>
-
-<style scoped>
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-}
-
-.modal-buttons {
-  text-align: right;
-  margin-top: 20px;
-}
-
-button {
-  margin-left: 10px;
-}
-</style> -->
-
-<!-- BorrowModal.vue -->
 <template>
   <div class="modal">
     <div class="modal-content">
-      <h2>Xác nhận mượn sách</h2>
-      <p></p>
-      <p>Bạn có chắc chắn muốn mượn sách này?</p>
+      <div class="modal-main">
+        <h2>Xác nhận mượn sách</h2>
+        <p>Bạn có chắc chắn muốn mượn sách này?</p>
+      </div>
       <div class="modal-buttons">
         <button @click="borrowBook">Mượn</button>
         <button @click="closeModal">Hủy</button>
@@ -112,7 +17,6 @@ button {
 import ProductService from "@/services/client/product.service";
 export default {
   name: "BorrowModal",
-
   props: {
     product: {
       type: Object,
@@ -127,7 +31,7 @@ export default {
   methods: {
     async borrowBook() {
       if (!this.user) {
-        const currentUrl = this.$route.fullPath; // Lưu trữ URL hiện tại
+        const currentUrl = this.$route.fullPath;
         this.$router.push({ name: "login", query: { redirect: currentUrl } });
         this.closeModal();
       } else {
@@ -138,7 +42,11 @@ export default {
           };
           await ProductService.borrowProduct(this.product._id, data);
           console.log("Mượn sách thành công!");
-          this.$emit("bookBorrowed"); // Kích hoạt sự kiện mượn sách thành công
+          this.$router.push({
+            name: `product-detail`,
+            params: { id: this.product._id },
+            query: { message: "pending" },
+          });
           this.closeModal();
         } catch (error) {
           console.error("Lỗi khi mượn sách:", error.message);
@@ -146,8 +54,10 @@ export default {
       }
     },
     closeModal() {
-      // Đóng modal
       this.$emit("close");
+      this.$emit("bookBorrowed", {
+        state: "pending",
+      });
     },
   },
 };
@@ -164,20 +74,59 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 999;
 }
 
 .modal-content {
   background-color: white;
   padding: 20px;
+  width: 40%;
+  height: 30%;
+  color: #12372a;
+  font-family: Helvetica;
   border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal p {
+  margin-bottom: 10px;
 }
 
 .modal-buttons {
-  text-align: right;
-  margin-top: 20px;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  align-items: center;
 }
 
-button {
+.modal-buttons button {
   margin-left: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100px;
+  background-color: #38b453;
+  color: white;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.modal-buttons button:hover {
+  background-color: #45a049;
+}
+
+.modal-buttons button:focus {
+  outline: none;
+}
+
+.modal-buttons button:last-child {
+  margin-left: 30px;
+  background-color: #ec804a;
 }
 </style>

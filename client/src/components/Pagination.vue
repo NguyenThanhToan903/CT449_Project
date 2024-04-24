@@ -1,15 +1,17 @@
 <template>
-  <div class="pagination">
-    <p
-      v-for="pageNumber in totalPages"
-      :key="pageNumber"
-      @click="goToPage(pageNumber)"
-      :class="{
-        active: pageNumber === currentPage,
-      }"
-    >
-      {{ pageNumber }}
-    </p>
+  <div>
+    <div class="pagination-main">
+      <p
+        v-for="pageNumber in totalPages"
+        :key="pageNumber"
+        @click="goToPage(pageNumber)"
+        :class="{
+          active: pageNumber === currentPage,
+        }"
+      >
+        {{ pageNumber }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -34,13 +36,13 @@ export default {
 </script>
 
 <style scoped>
-.pagination {
+.pagination-main {
   margin-top: 20px;
   display: flex;
   justify-content: center;
 }
 
-.pagination p {
+.pagination-main p {
   margin-right: 5px;
   padding: 5px 10px;
   border: 1px solid #ccc;
@@ -50,12 +52,12 @@ export default {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.pagination p:hover {
+.pagination-main p:hover {
   background-color: #f0f0f0;
 }
 
-.pagination p.active,
-.pagination p.current {
+.pagination-main p.active,
+.pagination-main p.current {
   background-color: #007bff;
   color: #fff;
   border-color: #007bff;

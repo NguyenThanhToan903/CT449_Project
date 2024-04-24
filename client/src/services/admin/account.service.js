@@ -19,7 +19,6 @@ class AccountService {
   async checkEmailExists(email) {
     try {
       const response = await this.Admin.post(`/check-email`, { email });
-      // console.log(response);
       return response;
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);

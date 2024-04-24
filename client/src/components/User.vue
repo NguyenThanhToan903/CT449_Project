@@ -1,6 +1,6 @@
 <template>
   <div class="user-profile">
-    <h2>Tài Khoản:</h2>
+    <h2>Tài Khoản</h2>
     <div v-if="user" class="user-details">
       <p><strong>Name:</strong> {{ user.name }}</p>
       <p><strong>Email:</strong> {{ user.email }}</p>
@@ -25,6 +25,9 @@ import Borrowing from "./Borrowing.vue";
 export default {
   components: {
     Borrowing,
+  },
+  props: {
+    searchQuery: String,
   },
   data() {
     return {
@@ -51,18 +54,24 @@ export default {
 
 <style scoped>
 .user-profile {
-  max-width: 600px;
-  margin: 0 auto;
   padding: 20px;
-  margin-top: 40px;
-  background-color: #f9f9f9;
+  margin: 0 auto;
+  max-width: 600px;
+  margin-top: 30px;
+  margin-bottom: 30px;
   border-radius: 8px;
+  font-size: 24px;
+  font-family: Lato, sans-serif;
+  background-color: #fbfada;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .user-profile h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
+  margin-bottom: 10px;
+  font-size: 34px;
+  text-transform: uppercase;
+  color: #12372a;
+  text-align: center;
 }
 
 .user-details {

@@ -4,7 +4,7 @@
     <select v-model="selectedStatus" @change="filterBorrowedBooks">
       <option value="all">Tất cả</option>
       <option value="pending">Chờ xác nhận</option>
-      <option value="borrowed">Đã mượn</option>
+      <option value="borrowing">Đang mượn</option>
       <option value="returned">Đã trả</option>
       <option value="cancelled">Đã hủy</option>
     </select>
@@ -26,18 +26,27 @@
             <span v-if="book.status === 'pending'">Chờ xác nhận</span>
             <span v-else-if="book.status === 'returned'">Đã trả</span>
             <span v-else-if="book.status === 'cancelled'">Đã hủy</span>
-            <span v-else-if="book.status === 'borrowed'">Đã mượn</span>
+            <span v-else-if="book.status === 'borrowing'">Đang mượn</span>
           </p>
           <p><strong>Ngày mượn:</strong> {{ formatDate(book.borrowedAt) }}</p>
           <p><strong>Ngày trả:</strong> {{ formatDate(book.returnBy) }}</p>
         </div>
-        <button
-          @click="cancelBorrow(book.bookId)"
-          v-if="book.status === 'pending'"
-          class="cancel-button"
-        >
-          Hủy
-        </button>
+        <div>
+          <button
+            @click="cancelBorrow(book.bookId, book.userId)"
+            v-if="book.status === 'pending'"
+            class="cancel-button"
+          >
+            Hủy
+          </button>
+          <button
+            v-if="book.status === 'cancelled' || book.status === 'returned'"
+            class="cancel-button"
+            @click="deleteBorrowed(book.bookId, book.userId)"
+          >
+            Xóa
+          </button>
+        </div>
       </li>
     </ul>
   </div>
@@ -66,31 +75,42 @@ export default {
       this.$router.push({ name: `product-detail`, params: { id: direct } });
     },
     formatDate(date) {
-      return new Date(date).toLocaleDateString("en-US");
+      return new Date(date).toLocaleDateString("vn");
     },
     filterBorrowedBooks() {
       let sortedBooks;
       if (this.selectedStatus === "all") {
-        sortedBooks = this.borrowedBooks;
+        sortedBooks = this.borrowedBooks.filter(
+          (book) => book.status !== "0" && book.status !== "returned"
+        );
       } else {
         sortedBooks = this.borrowedBooks.filter(
-          (book) => book.status === this.selectedStatus
+          (book) =>
+            book.status === this.selectedStatus &&
+            book.status !== "0" &&
+            book.status !== "returned"
         );
       }
       sortedBooks.sort((a, b) => {
         const statusPriority = {
           pending: 1,
-          borrowed: 2,
-          returned: 3,
-          cancelled: 4,
+          cancelled: 2,
+          borrowing: 3,
+          returned: 4,
         };
         return statusPriority[a.status] - statusPriority[b.status];
       });
-      console.log("sort", sortedBooks);
       this.filteredBooks = sortedBooks;
     },
-    async cancelBorrow(bookId) {
-      await ProductService.cancelBorrow(bookId);
+    async cancelBorrow(bookId, userId) {
+      await ProductService.cancelBorrow(bookId, { userId: userId });
+      await this.refreshBorrowedBooks();
+    },
+    async deleteBorrowed(bookId, userId) {
+      await ProductService.deleteBorrow(bookId, {
+        userId: userId,
+        status: "cancelled",
+      });
       await this.refreshBorrowedBooks();
     },
     async refreshBorrowedBooks() {
@@ -108,6 +128,8 @@ export default {
     },
   },
   async mounted() {
+    const isUser = await localStorage.getItem("email");
+    if (!isUser) this.$router.push({ name: "login" });
     await this.getUser();
     if (this.user.data.message === "User not found") {
       this.$router.push({ name: "login" });
@@ -121,8 +143,12 @@ export default {
 .borrowed-books-container {
   max-width: 800px;
   margin: 0 auto;
+  min-height: 680px;
 }
 
+.borrowed-books-container h2 {
+  color: #1a7857;
+}
 .borrowed-books-list {
   list-style-type: none;
   padding: 0;
@@ -167,5 +193,8 @@ select {
   margin-bottom: 10px;
   padding: 5px;
   border-radius: 3px;
+}
+.book-details span {
+  margin-left: 5px;
 }
 </style>

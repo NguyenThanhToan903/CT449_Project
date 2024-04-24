@@ -10,35 +10,55 @@
           <div class="box2 des">Mô tả: {{ product.description }}</div>
           <div class="box2 price">Giá: {{ product.price }} đ</div>
           <div class="box2 discount">
-            Giảm giá: {{ product.discountPercentage }}%
+            Giảm giá:
+            <span v-if="product.discountPercentage !== 0">{{
+              product.discountPercentage
+            }}</span>
+            <span v-else>0</span>
+            %
           </div>
           <div class="box2 stock">Còn lại: {{ product.stock }}</div>
           <div class="btn-group">
-            <button class="btn button-edit" v-if="isAdmin" @click="editProduct">
-              Chỉnh sửa
-            </button>
+            <p class="edit" v-if="isAdmin" @click="editProduct">Chỉnh sửa</p>
             <button
               type="button"
-              class="btn btn-success"
-              v-if="status === '' && !isBorrowing && !isAdmin"
+              class="borrow"
+              v-if="
+                status !== 'pending' &&
+                !isBorrowing &&
+                !isAdmin &&
+                product.stock
+              "
               @click="handleBorrowClick"
             >
               Mượn ngay
             </button>
-            <button
+            <!--  -->
+
+            <p class="stock" v-if="product.stock === 0">Đã hết</p>
+            <p
               type="button"
-              class="btn btn-success"
-              v-else-if="(status === 'pending' || isBorrowing) && !isAdmin"
+              class="pending"
+              v-else-if="
+                (status === 'pending' || isBorrowing) &&
+                !isAdmin &&
+                status !== 'borrowing' &&
+                status !== '0'
+              "
             >
               Đang xử lý
-            </button>
-            <p v-else-if="!isAdmin">Đã mượn</p>
+            </p>
+            <p class="borrowing" v-if="status === 'borrowing' && !isAdmin">
+              Đã mượn
+            </p>
+
             <button
               type="button"
-              class="btn btn-success ms-1"
-              v-if="product.stock > 0 && !isAdmin"
+              class="delete"
+              v-if="isAdmin"
+              @click="deleteProduct"
             >
-              Mua
+              Xóa
             </button>
           </div>
         </div>
@@ -60,6 +80,7 @@
 
 <script>
 import ProductService from "@/services/admin/product.service";
+import ProductClient from "@/services/client/product.service";
 import User from "@/services/client/accoun.service";
 import ProductItem from "./ProductItem.vue";
 import BorrowModal from "./BorrowModal.vue";
@@ -70,7 +91,7 @@ export default {
       product: null,
       errorMessage: "",
       showModal: false,
-      status: "",
+      status: "0",
       user: null,
       isBorrowing: false,
     };
@@ -88,28 +109,49 @@ export default {
     async getUser() {
       const email = localStorage.getItem("email");
       this.user = await User.findByEmail(email);
-    },
-    async getCheck() {
-      const message = this.$route.query.message;
-      if (message === "pending") {
-        this.status = message;
-      } else this.status = "";
+      console.log(this.user.data._id);
     },
     async getProduct() {
       try {
         this.product = await ProductService.getProductById(
           this.$route.params.id
         );
-        await this.getCheck();
+        await this.getUser();
+        if (this.product.status === "pending") this.status = "pending";
+        else if (this.product.status === "borrowing") this.status = "borrowing";
+        else this.status = "0";
+
+        const borrowStatus = await ProductClient.checkBorrowStatus(
+          this.product._id,
+          this.user.data._id
+        );
+        if (borrowStatus && borrowStatus.borrowed) {
+          if (borrowStatus.borrowed === "cancelled") this.status = "0";
+          else if (borrowStatus.borrowed === "returned") this.status = "0";
+          else this.status = borrowStatus.borrowed;
+        }
       } catch (error) {
         this.errorMessage = "Failed to fetch product. Please try again later.";
         console.error("Error fetching product:", error.message);
       }
     },
-    handleBorrowClick() {
+    async deleteProduct() {
+      try {
+        if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
+          await ProductService.deleteProduct(this.product._id);
+          alert("Sản phẩm đã được xóa thành công!");
+
+          this.$router.push({ name: "home" });
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Đã xảy ra lỗi khi xóa sản phẩm. Vui lòng thử lại sau.");
+      }
+    },
+    handleBorrowClick(data) {
       if (
-        this.user &&
-        this.user.data &&
+        !this.user ||
+        !this.user.data ||
         this.user.data.message === "User not found"
       ) {
         const currentUrl = this.$route.fullPath;
@@ -118,6 +160,8 @@ export default {
           query: { redirect: currentUrl },
         });
       } else {
+        console.log();
+        this.product.stock = data.quatity;
         this.showModal = true;
       }
     },
@@ -127,20 +171,32 @@ export default {
         params: { id: this.product._id },
       });
     },
+    changeQuatity() {
+      this.product.stock = this.product.stock - 1;
+    },
     bookBorrowedHandler() {
       this.isBorrowing = true;
+      this.status = "pending";
     },
   },
   watch: {
     "$route.params.id": function (newId, oldId) {
       if (newId !== oldId) {
         this.getProduct();
+        // if (borrowStatus && borrowStatus.borrowed) {
+        //   this.isBorrowing = true;
+        //   this.status = borrowStatus.borrowed;
+        // }
       }
     },
+    // "$route.query.message": function (newMessage, oldMessage) {
+    //   if (newMessage !== oldMessage) {
+    //   }
+    // },
   },
   mounted() {
-    this.getProduct();
     this.getUser();
+    this.getProduct();
   },
 };
 </script>
@@ -192,6 +248,7 @@ export default {
 }
 
 .detail-box1 img {
+  box-shadow: 0 0 10px #adbc9f;
 }
 
 .box-detail {
@@ -224,31 +281,50 @@ export default {
   border-radius: 5px;
 }
 
-.button-edit {
+p.stock {
+  background-color: #f46056;
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.pending,
+.borrow,
+.edit,
+p.stock,
+.borrowing {
+  background-color: #f46056;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: center;
+  padding: 4px 8px;
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
+.pending,
+.borrow,
+.edit {
+  cursor: pointer;
+}
+
+.edit {
   background-color: #436850;
 }
 
-.btn-success {
+.borrow {
   background-color: #4caf50;
 }
-
-.btn-success:hover {
-  background-color: #45a049;
+.borrowing {
+  background-color: #3a705d;
 }
-
-.btn-success:active {
-  background-color: #45a049;
-}
-
-.btn-ms-1 {
-  background-color: #f44336;
-}
-
-.btn-ms-1:hover {
-  background-color: #da190b;
-}
-
-.btn-ms-1:active {
-  background-color: #da190b;
+.product-page.product-list-detail {
+  min-height: 600px;
+  position: relative;
 }
 </style>

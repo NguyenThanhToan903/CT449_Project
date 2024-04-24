@@ -92,7 +92,7 @@ export default {
           localStorage.setItem("email", this.account.email);
           localStorage.setItem("userRole", "admin");
           const redirect = this.$route.query.redirect || {
-            name: "admin-products",
+            name: "home",
           };
           this.$router.push(redirect);
         }
@@ -110,7 +110,8 @@ export default {
   border-radius: 2px;
   padding: 20px;
   width: 600px;
-  margin: 8% auto;
+  margin: 10% auto;
+  box-shadow: 0 0px 10px #12372a6e;
 }
 
 .login-authentication h3 {

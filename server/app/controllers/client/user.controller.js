@@ -129,7 +129,6 @@ exports.logout = async (req, res) => {
 
 exports.findByEmail = async (req, res) => {
   const { email } = req.params;
-  // console.log(email);
   try {
     const user = await ReaderModel.findOne({ email });
 
@@ -137,7 +136,6 @@ exports.findByEmail = async (req, res) => {
       return res.json({ message: "User not found" });
     }
     return res.send(user);
-    // res.status(200).json(user);
   } catch (error) {
     console.error("Error finding user by email:", error);
     res.status(500).json({ message: "Internal server error" });

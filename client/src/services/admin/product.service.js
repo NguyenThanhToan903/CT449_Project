@@ -32,6 +32,17 @@ class ProductService {
     }
   }
 
+  async editProduct(productId, productData) {
+    try {
+      const response = await this.products.put(`/${productId}`, productData);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        `Error editing product with ID ${productId}: ${error.message}`
+      );
+    }
+  }
+
   async updateProduct(productId, productData) {
     try {
       const response = await this.products.put(`/${productId}`, productData);
@@ -43,7 +54,9 @@ class ProductService {
 
   async deleteProduct(productId) {
     try {
-      const response = await this.products.delete(`/${productId}`);
+      const response = await this.products.post(`/deleteborrow`, {
+        id: productId,
+      });
       return response.data;
     } catch (error) {
       throw new Error(`Error deleting product with ID ${productId}`);
@@ -56,6 +69,18 @@ class ProductService {
       return response.data;
     } catch (error) {
       throw new Error(`Failed to fetch borrow: ${error.message}`);
+    }
+  }
+
+  async confirmBorrow(data) {
+    try {
+      const response = await this.products.post(`/confirm-borrow`, data);
+
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        `Error confirming borrow for product with ID ${data.bookId}: ${error.message}`
+      );
     }
   }
 

@@ -1,15 +1,6 @@
 <template>
-  <div class="">
-    <button
-      v-if="
-        isAdminOrEmployee &&
-        isLoggedIn &&
-        (this.$route.name === 'page-admin' || this.$route.name === 'home')
-      "
-      @click="goToCreateProduct"
-    >
-      Add Product
-    </button>
+  <div class="product-page">
+    <InputSearch class="input-search" @search="updateSearchQuery" />
     <div v-if="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
@@ -31,6 +22,7 @@
       </div>
     </div>
     <Pagination
+      class="paginationPage"
       :total-pages="totalPages"
       :current-page="currentPage"
       @page-changed="changePage"
@@ -40,12 +32,14 @@
 
 <script>
 import productService from "../services/client/product.service";
+import InputSearch from "@/components/InputSearch.vue";
 import User from "../services/client/accoun.service";
 import Pagination from "./Pagination.vue";
 export default {
   name: "productItem",
   components: {
     Pagination,
+    InputSearch,
   },
   data() {
     return {
@@ -54,10 +48,8 @@ export default {
       user: "",
       currentPage: 1,
       productsPerPage: 8,
+      searchQuery: "",
     };
-  },
-  props: {
-    searchQuery: String,
   },
 
   computed: {
@@ -75,15 +67,17 @@ export default {
     paginatedProducts() {
       const startIndex = (this.currentPage - 1) * this.productsPerPage;
       const endIndex = startIndex + this.productsPerPage;
-      return this.filteredProducts.slice(startIndex, endIndex);
+      return this.activeProducts.slice(startIndex, endIndex);
     },
-
     filteredProducts() {
       if (!this.searchQuery) return this.products;
       const query = this.searchQuery.toLowerCase();
       return this.products.filter((product) =>
         product.title.toLowerCase().includes(query)
       );
+    },
+    activeProducts() {
+      return this.products.filter((product) => !product.deleted);
     },
   },
   async mounted() {
@@ -105,9 +99,18 @@ export default {
     },
   },
   methods: {
+    updateSearchQuery(query) {
+      this.searchQuery = query;
+      this.getProducts();
+    },
     async getProducts() {
       try {
-        this.products = await productService.getAllProducts();
+        const allProducts = await productService.getAllProducts();
+        this.products = allProducts.filter(
+          (product) =>
+            !product.deleted &&
+            product.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
       } catch (error) {
         this.errorMessage = "Failed to fetch products. Please try again later.";
       }
@@ -115,7 +118,6 @@ export default {
     async getUser() {
       const email = localStorage.getItem("email");
       this.user = await User.findByEmail(email);
-      console.log("hello user", this.user.data._id);
     },
     changePage(page) {
       this.currentPage = page;
@@ -123,17 +125,18 @@ export default {
     async check(id) {
       await this.getUser();
       const book = await productService.getProductById(id);
-      console.log("check==", book._id, this.user.data._id);
       const { message } = await productService.checkBorrow(
         book._id,
         this.user.data
       );
       console.log(message);
+      console.log("message: " + message);
       this.$router.push({
         name: `product-detail`,
         params: { id: book._id },
-        query: { message: message },
+        // query: { message: message },
       });
+      this.$emit("productStatus");
     },
     goToCreateProduct() {
       this.$router.push({
@@ -145,12 +148,17 @@ export default {
 </script>
 
 <style>
+.product-page {
+  min-height: 650px;
+  position: relative;
+  margin-bottom: 30px;
+}
 .product-list {
   display: flex;
   flex-wrap: wrap;
 }
 .product-item {
-  width: calc(25% - 20px); /* Số lượng mục sản phẩm trên mỗi hàng */
+  width: calc(25% - 20px);
   margin-bottom: 20px;
   margin-right: 10px;
   margin-left: 10px;
@@ -160,7 +168,7 @@ export default {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative; /* Để có thể sử dụng position absolute cho hình ảnh */
+  position: relative;
 }
 
 .product-item:hover {
@@ -169,20 +177,20 @@ export default {
 }
 
 .product-item .product-image {
-  width: 100%; /* Chiều rộng của hình ảnh sản phẩm */
-  height: 0; /* Đặt chiều cao ban đầu của hình ảnh thành 0 */
-  padding-top: 133.33%; /* Tính toán chiều cao dựa trên tỷ lệ 3:4 (4 / 3 * 100) */
+  width: 100%;
+  height: 0;
+  padding-top: 133.33%;
   overflow: hidden;
   position: relative;
 }
 
 .product-item .product-image img {
-  position: absolute; /* Vị trí tuyệt đối để hình ảnh chiếm toàn bộ không gian của container */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Hiển thị hình ảnh mà không bị biến dạng */
+  object-fit: cover;
 }
 
 .product-item .product-details {
@@ -202,5 +210,11 @@ export default {
 
 .product-item .product-details .discount {
   color: #888;
+}
+.paginationPage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10;
 }
 </style>

@@ -108,7 +108,8 @@ module.exports.update = async (req, res, next) => {
 };
 
 module.exports.delete = async (req, res) => {
-  const id = req.params.id;
+  const id = req.body.id;
+  console.log(req.body.id);
   try {
     await Product.updateOne(
       {
@@ -164,7 +165,7 @@ module.exports.detail = async (req, res) => {
 
 module.exports.getAll = async (req, res, next) => {
   try {
-    const books = await Product.find({});
+    const books = await Product.find({ deleted: false });
     res.json(books);
   } catch (error) {
     console.error("Error finding books:", error);
@@ -181,4 +182,94 @@ module.exports.getBorrow = async (req, res, next) => {
   else borrows = await Borrow.find({ status: type });
   console.log("borrows");
   res.json(borrows);
+};
+
+module.exports.editProduct = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const {
+      title,
+      author,
+      stock,
+      price,
+      description,
+      priceNew,
+      discountPercentage,
+      image,
+      namePublish,
+      addressPublish,
+      yearPublish,
+    } = req.body;
+
+    if (
+      !title ||
+      !author ||
+      !stock ||
+      !price ||
+      !description ||
+      !image ||
+      !namePublish ||
+      !addressPublish ||
+      !yearPublish
+    ) {
+      return res.status(400).json({ message: "Please fill all fields" });
+    }
+
+    const parsedPrice = parseInt(price);
+    const parsedStock = parseInt(stock);
+
+    let calculatedPriceNew = priceNew;
+    if (!calculatedPriceNew || isNaN(calculatedPriceNew)) {
+      calculatedPriceNew = (
+        (parsedPrice * (100 - discountPercentage)) /
+        100
+      ).toFixed(0);
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.title = title;
+    product.author = author;
+    product.stock = parsedStock;
+    product.price = parsedPrice;
+    product.description = description;
+    product.priceNew = calculatedPriceNew;
+    product.discountPercentage = discountPercentage;
+    product.image = image;
+    product.namePublish = namePublish;
+    product.addressPublish = addressPublish;
+    product.yearPublish = yearPublish;
+
+    await product.save();
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Error editing product:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports.confirm = async (req, res, next) => {
+  // try {
+  const { bookId, userId } = req.body;
+  console.log(bookId, userId);
+  data = {
+    bookId: bookId,
+    userId: userId,
+  };
+  console.log(data);
+  const borrow = await Borrow.findOne(data);
+  console.log(borrow);
+  if (!borrow) {
+    return res.status(404).json({ message: "Borrow record not found" });
+  }
+
+  borrow.status = "borrowing";
+
+  await borrow.save();
+  console.log(borrow);
+  res.status(200).json(borrow);
 };

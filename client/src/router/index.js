@@ -62,20 +62,27 @@ const AdminRoutes = [
         path: "/add-product",
         name: "add-product",
         component: () => import("@/views/admin/AddProducts.vue"),
+        beforeEnter: (to, from, next) => {
+          if (!store.state.isAuthenticated) {
+            next({ name: "login" });
+          } else {
+            next();
+          }
+        },
       },
       {
         path: "/edit/:id",
         name: "product-edit",
         component: () => import("@/components/EditProduct.vue"),
+        beforeEnter: (to, from, next) => {
+          if (!store.state.isAuthenticated) {
+            next({ name: "login" });
+          } else {
+            next();
+          }
+        },
       },
     ],
-    beforeEnter: (to, from, next) => {
-      if (!store.state.isAuthenticated) {
-        next({ name: "login" });
-      } else {
-        next();
-      }
-    },
   },
 ];
 

@@ -147,6 +147,7 @@ export default {
   margin: auto;
   margin-bottom: 50px;
   margin-top: 50px;
+  box-shadow: 0 0px 10px #12372a6e;
 }
 
 .register-authen h3 {

@@ -125,7 +125,7 @@
             </form>
           </div>
         </div>
-        <button type="submit" class="btn button-section">Thêm</button>
+        <button type="submit" class="add-btn">Thêm</button>
       </div>
     </div>
   </div>
@@ -142,14 +142,14 @@ export default {
     const product = reactive({
       title: "",
       author: "",
-      price: "",
-      stock: "",
-      description: "",
-      discountPercentage: "",
+      price: 0,
+      stock: 0,
+      description: " ",
+      discountPercentage: 0,
       image: "",
-      yearPublish: "",
-      namePublish: "",
-      addressPublish: "",
+      yearPublish: " ",
+      namePublish: 0,
+      addressPublish: " ",
     });
 
     const addNewProduct = async () => {
@@ -189,6 +189,7 @@ export default {
   color: #436850;
 }
 .add-main {
+  padding-bottom: 20px;
   background-color: #fffeee;
 }
 .left-right-section {
@@ -213,8 +214,15 @@ h2 {
 
 .form-group {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   margin-top: 10px;
+}
+
+.form-group span {
+  position: absolute;
+  margin-left: 30px;
+  color: red;
+  font-size: 10px;
 }
 
 label {
@@ -225,7 +233,7 @@ label {
 }
 
 .input-item {
-  width: 100%;
+  width: 400px;
   border: none;
   height: 32px;
   margin-left: 20px;
@@ -263,5 +271,20 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.add-btn {
+  display: flex;
+  background-color: #436850;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 2px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
 }
 </style>

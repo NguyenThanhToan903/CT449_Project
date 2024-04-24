@@ -39,21 +39,36 @@ class ProductService {
     }
   }
   async getBorrowedByUserId(userId) {
+    const response = await this.products.get(`/borrowed/${userId}`);
+    return response.data;
+  }
+  async cancelBorrow(bookId, data) {
+    const response = await this.products.put(`/cancel/${bookId}`, data);
+    return response.data;
+  }
+  async deleteBorrow(bookId, data) {
+    const response = await this.products.put(`/deleteborrow/${bookId}`, data);
+    return response.data;
+  }
+
+  async returnBook(data) {
+    const response = await this.products.post(`/return`, data);
+    return response.data;
+  }
+  async checkBorrowStatus(productId, userId) {
     try {
-      const response = await this.products.get(`/borrowed/${userId}`);
+      console.log("checkBorrowStatus", productId, userId);
+      const data = {
+        userId: userId,
+        bookId: productId,
+      };
+
+      const response = await this.products.post(`/check-borrow`, data);
       return response.data;
     } catch (error) {
       throw new Error(
-        `Error fetching borrowed products for user with ID ${userId}`
+        `Error checking borrow status for product with ID ${productId}`
       );
-    }
-  }
-  async cancelBorrow(bookId) {
-    try {
-      const response = await this.products.put(`/cancel/${bookId}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(`Error cancelling borrow for book with ID ${bookId}`);
     }
   }
 }
