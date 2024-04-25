@@ -151,9 +151,9 @@ export default {
 .product-page {
   min-height: 650px;
   position: relative;
-  margin-bottom: 30px;
 }
 .product-list {
+  margin-bottom: 60px;
   display: flex;
   flex-wrap: wrap;
 }
@@ -212,9 +212,5 @@ export default {
   color: #888;
 }
 .paginationPage {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -10;
 }
 </style>

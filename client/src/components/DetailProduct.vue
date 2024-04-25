@@ -7,6 +7,7 @@
       <div v-if="product" class="detail-box2">
         <div class="box-detail">
           <h3 v-if="product" class="bookDetail-title">{{ product.title }}</h3>
+          <h4>Tác giả: {{ product.author }}</h4>
           <div class="box2 des">Mô tả: {{ product.description }}</div>
           <div class="box2 price">Giá: {{ product.price }} đ</div>
           <div class="box2 discount">
@@ -25,6 +26,8 @@
               class="borrow"
               v-if="
                 status !== 'pending' &&
+                status !== 'borrowing' &&
+                status !== 'returned' &&
                 !isBorrowing &&
                 !isAdmin &&
                 product.stock
@@ -52,14 +55,14 @@
               Đã mượn
             </p>
 
-            <button
+            <p
               type="button"
-              class="delete"
+              class="delete-button"
               v-if="isAdmin"
               @click="deleteProduct"
             >
               Xóa
-            </button>
+            </p>
           </div>
         </div>
       </div>
@@ -278,6 +281,7 @@ export default {
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
+  width: 100px;
   border-radius: 5px;
 }
 
@@ -295,6 +299,7 @@ p.stock {
 .borrow,
 .edit,
 p.stock,
+.delete-button,
 .borrowing {
   background-color: #f46056;
   color: #fff;
@@ -326,5 +331,10 @@ p.stock,
 .product-page.product-list-detail {
   min-height: 600px;
   position: relative;
+}
+
+.delete-button:hover {
+  background-color: rgb(221, 107, 107);
+  color: white;
 }
 </style>

@@ -15,6 +15,7 @@
               class="navbar-item"
               v-if="
                 userRole !== 'admin' &&
+                isLoggedIn &&
                 $route.name !== 'login' &&
                 $route.name !== 'register'
               "
@@ -48,6 +49,19 @@
               "
             >
               Quản lý mượn
+            </p>
+            <p
+              class="navbar-item"
+              @click="navigateToBorrowedBooks('user-list')"
+              v-if="
+                userRole === 'admin' &&
+                $route.name !== 'user-list' &&
+                isLoggedIn &&
+                $route.name !== 'login' &&
+                $route.name !== 'register'
+              "
+            >
+              Người dùng
             </p>
           </div>
           <div v-if="userRole !== 'admin' && isLoggedIn">

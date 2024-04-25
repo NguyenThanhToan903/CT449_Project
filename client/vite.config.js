@@ -16,6 +16,10 @@ export default defineConfig({
         target: "http://localhost:3000/",
         changeOrigin: true,
       },
+      // "/admin/users": {
+      //   target: "http://localhost:3000/",
+      //   changeOrigin: true,
+      // },
       "/admin-products": {
         target: "http://localhost:3000/",
         changeOrigin: true,

@@ -2,40 +2,45 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-section">
-        <h4>About Us</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <h4>Về chúng tôi</h4>
+        <p>Đây là trang web mượn sách.</p>
       </div>
       <div class="footer-section">
-        <h4>Quick Links</h4>
+        <h4>Truy cập nhanh</h4>
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Products</a></li>
-          <li><a href="#">Contact</a></li>
+          <li>
+            <router-link class="link" :to="{ name: 'home' }">Home</router-link>
+          </li>
+          <li>
+            <router-link class="link" :to="{ name: 'borrowing' }"
+              >Products</router-link
+            >
+          </li>
         </ul>
       </div>
       <div class="footer-section">
-        <h4>Contact Us</h4>
-        <p>123 Street Name, City, Country</p>
+        <h4>Liên hệ</h4>
+        <p>123 Street Ninh Kieu, Can Tho, Viet Nam</p>
         <p>Email: info@example.com</p>
         <p>Phone: +1234567890</p>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2024 Your Company. All rights reserved.</p>
+      <p class="footer-bottom-p">
+        &copy; 2024 product by Thanh Toan. All rights reserved.
+      </p>
     </div>
   </footer>
 </template>
 
 <script>
-export default {
-  // You can add any logic or properties here if needed
-};
+export default {};
 </script>
 
 <style scoped>
 .footer {
   background-color: #f4f4f4;
-  padding: 30px 0;
+  padding-top: 30px;
   color: #333;
 }
 
@@ -64,7 +69,7 @@ export default {
   margin-bottom: 5px;
 }
 
-.footer-section ul li a {
+.footer-section ul li .link {
   color: #333;
   text-decoration: none;
 }
@@ -72,5 +77,8 @@ export default {
 .footer-bottom {
   text-align: center;
   margin-top: 20px;
+}
+.footer-bottom-p {
+  margin-bottom: 0 !important;
 }
 </style>

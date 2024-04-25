@@ -61,7 +61,7 @@ const AdminRoutes = [
       {
         path: "/add-product",
         name: "add-product",
-        component: () => import("@/views/admin/AddProducts.vue"),
+        component: () => import("@/components/AddProducts.vue"),
         beforeEnter: (to, from, next) => {
           if (!store.state.isAuthenticated) {
             next({ name: "login" });
@@ -69,6 +69,11 @@ const AdminRoutes = [
             next();
           }
         },
+      },
+      {
+        path: "/page-admin/user-list",
+        name: "user-list",
+        component: () => import("@/components/UserList.vue"),
       },
       {
         path: "/edit/:id",

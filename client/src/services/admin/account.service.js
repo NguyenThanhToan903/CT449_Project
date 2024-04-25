@@ -36,6 +36,14 @@ class AccountService {
   async checkAuthentication(data) {
     return (await this.Admin.get("/check-authentication", data)).data;
   }
+  async getAllUsers() {
+    try {
+      const response = await this.Admin.get("/users");
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message || error.message);
+    }
+  }
 }
 
 export default new AccountService();

@@ -3,7 +3,8 @@
     <Header class="header" />
     <div class="container">
       <!-- <InputSearch class="input-search" @search="updateSearchQuery" /> -->
-      <router-view :searchQuery="searchQuery" />
+      <router-view />
+      <!-- :searchQuery="searchQuery" -->
     </div>
     <Footer
       v-if="this.$route.name !== 'login' && this.$route.name !== 'register'"
@@ -38,6 +39,9 @@ export default {
   padding-top: 20px;
   margin-top: 76px;
   position: relative;
+}
+.container:has(.user-profile) {
+  min-height: calc(100vh - 200px);
 }
 
 .container:has(.form-login) {

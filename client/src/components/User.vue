@@ -16,7 +16,7 @@
       <p>{{ this.$route.params.id }}</p>
     </div>
   </div>
-  <Borrowing />
+  <Borrowing v-if="user - detail" />
 </template>
 
 <script>

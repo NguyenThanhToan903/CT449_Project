@@ -21,7 +21,7 @@
             {{ borrowedItem.bookName }} - {{ borrowedItem.bookAuthor }}
           </p>
           <p :to="'/user'" class="borrowed-by">
-            Mượn bởi: {{ borrowedItem.userName }}
+            Mượn bởi: {{ borrowedItem.email }}
           </p>
           <p class="status" v-if="borrowedItem.status === 'pending'">
             Trạng thái: chờ xác nhận
@@ -38,20 +38,20 @@
           <button
             v-if="borrowedItem.status === 'pending'"
             @click="confirmBorrow(borrowedItem.bookId, borrowedItem.userId)"
-            class="confirm-button"
+            class="confirm-button button-b"
           >
             Xác nhận
           </button>
           <button
             v-if="borrowedItem.status === 'borrowing'"
             @click="returnBook(borrowedItem.bookId, borrowedItem.userId)"
-            class="confirm-button"
+            class="returned-button button-b"
           >
             Đã trả
           </button>
           <button
             @click="deleteDisplay(borrowedItem.bookId, borrowedItem.userId)"
-            class="confirm-button"
+            class="delete-button button-b"
           >
             Xóa
           </button>
@@ -152,6 +152,7 @@ export default {
           borrowedItem.userName = user.last_name + " " + user.first_name;
           const book = await Product.getProductById(borrowedItem.bookId);
           borrowedItem.bookName = book.title;
+          borrowedItem.email = user.email;
           borrowedItem.bookAuthor = book.author;
           borrowedItem.deleted = book.deleted;
         }
@@ -171,7 +172,8 @@ export default {
 .borrowed-products-container {
   max-width: 600px;
   margin: 0 auto;
-  height: calc(100vh - 80px);
+  padding-bottom: 30px;
+  min-height: calc(100vh);
 }
 .borrowed-products-container {
   max-width: 800px;
@@ -229,5 +231,33 @@ export default {
 .status {
   color: #4579c7;
   text-decoration: none;
+}
+.button-b {
+  padding: 10px;
+  width: 100px;
+  border: none;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+.confirm-button {
+  background-color: #1a7078;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #298d96;
+  color: white;
+}
+.returned-button {
+  background-color: #1a7857;
+}
+.delete-button {
+  background-color: rgb(218, 69, 69);
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: rgb(221, 107, 107);
+  color: white;
 }
 </style>

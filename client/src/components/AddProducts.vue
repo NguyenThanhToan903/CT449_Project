@@ -2,10 +2,10 @@
   <div class="add-product">
     <div class="add-container">
       <h2 class="add-header">Thêm sách mới</h2>
-      <div class="add-main">
-        <div class="left-right-section">
-          <div class="left-section">
-            <form @submit.prevent="addNewProduct" class="form">
+      <form @submit.prevent="addNewProduct" class="form">
+        <div class="add-main">
+          <div class="left-right-section">
+            <div class="left-section">
               <div class="form-group">
                 <label for="title">Tên sách:</label>
                 <input
@@ -61,10 +61,10 @@
                 />
                 <div class="input-line"></div>
               </div>
-            </form>
-          </div>
-          <div class="right-section">
-            <form @submit.prevent="addNewProduct" class="form">
+              <!-- </form> -->
+            </div>
+            <div class="right-section">
+              <!-- <form @submit.prevent="addNewProduct" class="form"> -->
               <div class="form-group">
                 <label for="discount">Giảm giá %:</label>
                 <input
@@ -122,18 +122,18 @@
                 />
                 <div class="input-line"></div>
               </div>
-            </form>
+            </div>
           </div>
+          <button type="submit" class="add-btn">Thêm</button>
         </div>
-        <button type="submit" class="add-btn">Thêm</button>
-      </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
 import { reactive } from "vue";
-import ProductService from "../../services/admin/product.service";
+import ProductService from "../services/admin/product.service";
 import { useRouter } from "vue-router";
 
 export default {
@@ -173,7 +173,7 @@ export default {
 <style scoped>
 .add-product {
   max-width: 1200px;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0px auto;
 }
 

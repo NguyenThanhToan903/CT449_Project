@@ -172,3 +172,13 @@ exports.getUser = async (req, res) => {
   const user = await ReaderModel.findById(id);
   return res.send(user);
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await ReaderModel.find();
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

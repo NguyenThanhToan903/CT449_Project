@@ -143,7 +143,7 @@ export default {
 .borrowed-books-container {
   max-width: 800px;
   margin: 0 auto;
-  min-height: 680px;
+  min-height: 100vh;
 }
 
 .borrowed-books-container h2 {

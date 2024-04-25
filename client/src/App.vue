@@ -27,6 +27,7 @@ export default {
 }
 
 .page {
+  min-height: 1080px;
   background-color: #adbc9f;
 }
 </style>
