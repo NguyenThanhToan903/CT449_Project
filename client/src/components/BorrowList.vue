@@ -234,7 +234,7 @@ export default {
 }
 .button-b {
   padding: 10px;
-  width: 100px;
+  width: 110px;
   border: none;
   border-radius: 10px;
   margin-right: 10px;

@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="main-page">
     <Header class="header" />
     <div class="container">
       <!-- <InputSearch class="input-search" @search="updateSearchQuery" /> -->
       <router-view />
-      <!-- :searchQuery="searchQuery" -->
     </div>
     <Footer
+      class="footer-layout"
       v-if="this.$route.name !== 'login' && this.$route.name !== 'register'"
     />
   </div>
@@ -35,21 +35,28 @@ export default {
 </script>
 
 <style scoped>
+.main-page {
+  background-color: #adbc9f;
+}
 .container {
   padding-top: 20px;
   margin-top: 76px;
   position: relative;
+  padding-bottom: 70px;
 }
 .container:has(.user-profile) {
-  min-height: calc(100vh - 200px);
+  min-height: 100vh;
 }
 
 .container:has(.form-login) {
-  min-height: 1080px;
+  min-height: 100vh;
 }
 .header {
   position: fixed;
   top: 0;
   z-index: 999;
+}
+.footer-layout {
+  bottom: 0;
 }
 </style>

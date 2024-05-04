@@ -87,6 +87,15 @@ const AdminRoutes = [
           }
         },
       },
+      {
+        path: "/:catchAll(.*)",
+        redirect: "/notfound",
+      },
+      {
+        path: "/notfound",
+        name: "notfound",
+        component: () => import("@/views/NotFound.vue"),
+      },
     ],
   },
 ];

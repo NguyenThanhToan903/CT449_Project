@@ -149,7 +149,6 @@ export default {
 
 <style>
 .product-page {
-  min-height: 650px;
   position: relative;
 }
 .product-list {
@@ -212,5 +211,9 @@ export default {
   color: #888;
 }
 .paginationPage {
+  position: relative;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
 </style>

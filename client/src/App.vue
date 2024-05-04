@@ -5,11 +5,8 @@
 </template>
 
 <script>
-import Header from "./components/Header.vue";
 export default {
-  components: {
-    Header,
-  },
+  components: {},
 };
 </script>
 
@@ -27,7 +24,6 @@ export default {
 }
 
 .page {
-  min-height: 1080px;
   background-color: #adbc9f;
 }
 </style>
