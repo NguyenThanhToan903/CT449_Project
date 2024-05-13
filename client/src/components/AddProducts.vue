@@ -152,7 +152,7 @@ export default {
       addressPublish: " ",
     });
 
-    // fix
+    //
 
     const addNewProduct = async () => {
       try {
