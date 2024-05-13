@@ -152,6 +152,8 @@ export default {
       addressPublish: " ",
     });
 
+    // fix
+
     const addNewProduct = async () => {
       try {
         const response = await ProductService.addProduct(product);
