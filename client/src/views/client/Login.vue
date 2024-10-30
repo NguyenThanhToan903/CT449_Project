@@ -76,7 +76,7 @@ export default {
       e.preventDefault();
       console.log("hello");
       const Admin = await AdminService.findByEmail(this.account.email);
-
+      console.log(Admin);
       if (Admin.data.message === "Admin not found") {
         await AccountService.login(this.account);
         this.$store.commit("login", this.account.email);
@@ -84,6 +84,7 @@ export default {
         localStorage.setItem("email", this.account.email);
         localStorage.setItem("userRole", "client");
         const redirect = this.$route.query.redirect || { name: "home" };
+        console.log(this.$route.query.redirect);
         this.$router.push(redirect);
       } else {
         if (Admin.data.position === "admin") {
@@ -95,6 +96,7 @@ export default {
           const redirect = this.$route.query.redirect || {
             name: "admin-products",
           };
+          console.log(this.$route.query.redirect);
           this.$router.push(redirect);
         }
       }

@@ -38,8 +38,9 @@ export default {
         try {
           const data = {
             email: this.user.email,
-            date: "7 ngày",
+            // date: "7 ngày",
           };
+          console.log(this.product._id, data);
           await ProductService.borrowProduct(this.product._id, data);
           console.log("Mượn sách thành công!");
           this.$router.push({

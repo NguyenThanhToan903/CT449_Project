@@ -42,12 +42,12 @@ module.exports.borrowBook = async (req, res, next) => {
   try {
     const bookId = req.params.id;
     const { email } = req.body;
-    const { date } = req.body;
-    console.log(bookId, email, date);
+    // const { date } = req.body;
+    console.log(bookId, email);
     const user = await User.findOne({ email });
     const book = await Book.findById(bookId);
-    const rangReturn = await dataDate.findOne({ name: date });
-    console.log("range: ", rangReturn);
+    // const rangReturn = await dataDate.findOne({ name: date });
+    // console.log("range: ", rangReturn);
     if (!book) {
       return res.json({ message: "User-Not-Found" });
     }
@@ -60,8 +60,8 @@ module.exports.borrowBook = async (req, res, next) => {
     const borrowedBook = new BorrowedBook({
       bookId,
       userId: user._id,
-      borrowedAt: new Date(),
-      returnBy: new Date(Date.now() + rangReturn.timeBorrow), // 1 tháng, // 1 tháng
+      // borrowedAt: new Date(),
+      // returnBy: new Date(Date.now() + rangReturn.timeBorrow), // 1 tháng, // 1 tháng
     });
 
     book.stock -= 1;
