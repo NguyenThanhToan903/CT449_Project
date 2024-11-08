@@ -42,12 +42,7 @@
             <p
               type="button"
               class="pending"
-              v-else-if="
-                (status === 'pending' || isBorrowing) &&
-                !isAdmin &&
-                status !== 'borrowing' &&
-                status !== '0'
-              "
+              v-else-if="status === 'pending' && !isAdmin && status !== '0'"
             >
               Đang xử lý
             </p>
@@ -94,7 +89,7 @@ export default {
       product: null,
       errorMessage: "",
       showModal: false,
-      status: "0",
+      status: "",
       user: null,
       isBorrowing: false,
     };
@@ -120,9 +115,10 @@ export default {
           this.$route.params.id
         );
         await this.getUser();
-        if (this.product.status === "pending") this.status = "pending";
-        else if (this.product.status === "borrowing") this.status = "borrowing";
-        else this.status = "0";
+
+        // if (this.product.status === "pending") this.status = "pending";
+        // else if (this.product.status === "borrowing") this.status = "borrowing";
+        // else this.status = "0";
 
         const borrowStatus = await ProductClient.checkBorrowStatus(
           this.product._id,

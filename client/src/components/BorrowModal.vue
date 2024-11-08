@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
 import ProductService from "@/services/client/product.service";
 export default {
   name: "BorrowModal",
@@ -43,6 +44,15 @@ export default {
           console.log(this.product._id, data);
           await ProductService.borrowProduct(this.product._id, data);
           console.log("Mượn sách thành công!");
+
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Đã gửi yêu cầu thành công!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
           this.$router.push({
             name: `product-detail`,
             params: { id: this.product._id },

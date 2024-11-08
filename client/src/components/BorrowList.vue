@@ -7,8 +7,9 @@
     >
       <option default value="all">Tất cả</option>
       <option value="pending">Chờ xác nhận</option>
-      <option value="borrow">Đã mượn</option>
-      <option value="return">Đã trả</option>
+      <option value="borrow">Đang mượn</option>
+      <!-- <option value="return">Đã trả</option> -->
+      <option value="deleted">Đã mượn</option>
     </select>
     <ul class="borrowed-products-list">
       <div
@@ -29,7 +30,7 @@
           <p class="status" v-else-if="borrowedItem.status === 'borrowing'">
             Trạng thái: Đang mượn
           </p>
-          <p class="status" v-else-if="borrowedItem.status === 'returned'">
+          <p class="status" v-else-if="borrowedItem.status === 'deleted'">
             Trạng thái: Đã trả
           </p>
           <p class="status" v-else-if="borrowedItem.status === 'canceled'">
@@ -131,7 +132,7 @@ export default {
         console.log("borrowedProducts", this.borrowedProducts);
         console.log("borrowedProducts", bookIndex);
         if (bookIndex !== -1) {
-          this.borrowedProducts[bookIndex].status = "0";
+          this.borrowedProducts[bookIndex].status = "delete";
           await this.fetchBorrowedProducts(this.selectedStatus);
         }
       } catch (error) {

@@ -5,8 +5,9 @@
       <option value="all">Tất cả</option>
       <option value="pending">Chờ xác nhận</option>
       <option value="borrowing">Đang mượn</option>
-      <option value="returned">Đã trả</option>
+      <!-- <option value="returned">Đã trả</option> -->
       <option value="cancelled">Đã hủy</option>
+      <option value="deleted">Đã mượn</option>
     </select>
     <ul class="borrowed-books-list">
       <li
@@ -24,9 +25,10 @@
           <p @click="toProduct(book.bookId)">
             <strong>Trạng thái:</strong>
             <span v-if="book.status === 'pending'">Chờ xác nhận</span>
-            <span v-else-if="book.status === 'returned'">Đã trả</span>
+            <!-- <span v-else-if="book.status === 'returned'">Đã trả</span> -->
             <span v-else-if="book.status === 'cancelled'">Đã hủy</span>
             <span v-else-if="book.status === 'borrowing'">Đang mượn</span>
+            <span v-else-if="book.status === 'deleted'">Đã mượn</span>
           </p>
           <p><strong>Ngày mượn:</strong> {{ formatDate(book.borrowedAt) }}</p>
           <p><strong>Ngày trả:</strong> {{ formatDate(book.returnBy) }}</p>
@@ -40,7 +42,7 @@
             Hủy
           </button>
           <button
-            v-if="book.status === 'cancelled' || book.status === 'returned'"
+            v-if="book.status === 'cancelled'"
             class="cancel-button"
             @click="deleteBorrowed(book.bookId, book.userId)"
           >
@@ -80,15 +82,10 @@ export default {
     filterBorrowedBooks() {
       let sortedBooks;
       if (this.selectedStatus === "all") {
-        sortedBooks = this.borrowedBooks.filter(
-          (book) => book.status !== "0" && book.status !== "returned"
-        );
+        sortedBooks = this.borrowedBooks.filter((book) => book.status !== "0");
       } else {
         sortedBooks = this.borrowedBooks.filter(
-          (book) =>
-            book.status === this.selectedStatus &&
-            book.status !== "0" &&
-            book.status !== "returned"
+          (book) => book.status === this.selectedStatus
         );
       }
       sortedBooks.sort((a, b) => {
@@ -96,7 +93,7 @@ export default {
           pending: 1,
           cancelled: 2,
           borrowing: 3,
-          returned: 4,
+          // returned: 4,
         };
         return statusPriority[a.status] - statusPriority[b.status];
       });
@@ -107,9 +104,13 @@ export default {
       await this.refreshBorrowedBooks();
     },
     async deleteBorrowed(bookId, userId) {
+      console.log(bookId, {
+        userId: userId,
+        status: "deleted",
+      });
       await ProductService.deleteBorrow(bookId, {
         userId: userId,
-        status: "cancelled",
+        status: "deleted",
       });
       await this.refreshBorrowedBooks();
     },

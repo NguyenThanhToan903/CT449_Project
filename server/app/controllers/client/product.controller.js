@@ -19,7 +19,10 @@ module.exports.getProduct = async (req, res, next) => {
 
 module.exports.getAll = async (req, res, next) => {
   const product = await Product.find({});
-  res.send(product);
+
+  const sortProducts = product.sort((a, b) => a.title.localeCompare(b.title));
+
+  res.send(sortProducts);
 };
 
 module.exports.checkBorrowBook = async (req, res, next) => {
@@ -121,17 +124,19 @@ module.exports.deleteBorrow = async (req, res, next) => {
   try {
     const bookId = req.params.id;
     const userId = req.body;
-    console.log(bookId, userId);
+    // console.log(bookId, userId);
     const borrowedBook = await BorrowedBook.findOne({
       bookId,
       userId: userId.userId,
-      status: userId.status,
+      // status: userId.status,
     });
+
     if (!borrowedBook) {
       return res.json({ message: "Borrowed book not found", book: bookId });
     }
+    console.log("Borrowedbook in borrowing" + borrowedBook);
 
-    borrowedBook.status = "0";
+    borrowedBook.status = "deleted";
 
     await borrowedBook.save();
     res.status(200).json({ message: "Book borrow cancelled successfully" });
@@ -175,27 +180,32 @@ module.exports.returnBook = async (req, res, next) => {
 
 module.exports.checkBorrowStatus = async (req, res, next) => {
   const userId = req.body.userId;
-  const productId = req.body.bookId;
-  // console.log("userId check:", userId, productId);
+  const productId = req.body.bookId; // console.log("userId check:", userId, productId);
   try {
-    const borrow = await BorrowedBook.findOne({
+    const borrows = await BorrowedBook.findAll({
       bookId: productId,
       userId: userId,
     });
-    if (!borrow) {
+    if (!borrows) {
       return res.json({ borrowed: false });
     }
-    if (borrow.status === "pending") {
-      res.json({ borrowed: "pending" });
-    } else if (borrow.status === "borrowing") {
-      res.json({ borrowed: "borrowing" });
-    } else if (borrow.status === "returned") {
-      res.json({ borrowed: "returned" });
-    } else if (borrow.status === "cancelled") {
-      res.json({ borrowed: "cancelled" });
-    } else {
-      res.json({ borrowed: "0" });
+    for (i = 0; i < borrows.length; i++) {
+      if (borrows[i].status !== "returned") {
+        res.json({ borrowed: borrows[i].status });
+      }
     }
+
+    // if (borrow.status === "pending") {
+    //   res.json({ borrowed: "pending" });
+    // } else if (borrow.status === "borrowing") {
+    //   res.json({ borrowed: "borrowing" });
+    // } else if (borrow.status === "returned") {
+    //   res.json({ borrowed: "returned" });
+    // } else if (borrow.status === "cancelled") {
+    //   res.json({ borrowed: "cancelled" });
+    // } else {
+    //   res.json({ borrowed: "0" });
+    // }
   } catch (error) {
     console.error("Error checking borrow status:", error);
     next(new ApiError("Error checking borrow status", 500));
