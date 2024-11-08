@@ -16,6 +16,7 @@
         </div>
         <div class="product-details">
           <h2>{{ product.title }}</h2>
+          <p class="author">Author: {{ product.author }}</p>
           <p class="price">Price: {{ product.priceNew }}</p>
           <p class="discount">Discount: {{ product.discountPercentage }}%</p>
         </div>
@@ -109,7 +110,15 @@ export default {
         this.products = allProducts.filter(
           (product) =>
             !product.deleted &&
-            product.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+            (product.title
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase()) ||
+              product.author
+                .toLowerCase()
+                .includes(this.searchQuery.toLowerCase()) ||
+              product.description
+                .toLowerCase()
+                .includes(this.searchQuery.toLowerCase()))
         );
       } catch (error) {
         this.errorMessage = "Failed to fetch products. Please try again later.";
@@ -162,12 +171,15 @@ export default {
   margin-right: 10px;
   margin-left: 10px;
 
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
+
+  flex-direction: column;
+  display: flex;
 }
 
 .product-item:hover {
@@ -176,11 +188,13 @@ export default {
 }
 
 .product-item .product-image {
-  width: 100%;
-  height: 0;
-  padding-top: 133.33%;
-  overflow: hidden;
+  width: 100%; /* Giảm kích thước xuống 75% */
+  height: 240px;
+  max-height: 100%;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .product-item .product-image img {

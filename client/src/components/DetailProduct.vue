@@ -163,11 +163,11 @@ export default {
           query: { redirect: currentUrl },
         });
       } else {
-        console.log();
         this.product.stock = data.quatity;
         this.showModal = true;
       }
     },
+
     editProduct() {
       this.$router.push({
         name: "product-edit",
@@ -177,6 +177,7 @@ export default {
     changeQuatity() {
       this.product.stock = this.product.stock - 1;
     },
+
     bookBorrowedHandler() {
       this.isBorrowing = true;
       this.status = "pending";

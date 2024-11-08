@@ -19,6 +19,7 @@
     "vue": "^3.4.21",
     "vue-cookies": "^1.8.4",
     "vue-router": "^4.3.0",
+    "vue-sweetalert2": "^5.0.11",
     "vuex": "^4.1.0",
     "yup": "^1.4.0"
   },

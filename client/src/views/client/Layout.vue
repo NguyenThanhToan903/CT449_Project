@@ -2,7 +2,6 @@
   <div class="main-page">
     <Header class="header" />
     <div class="container">
-      <!-- <InputSearch class="input-search" @search="updateSearchQuery" /> -->
       <router-view />
     </div>
     <Footer
@@ -21,16 +20,6 @@ export default {
     Header,
     Footer,
   },
-  // data() {
-  //   return {
-  //     searchQuery: "",
-  //   };
-  // },
-  // methods: {
-  //   updateSearchQuery(query) {
-  //     this.searchQuery = query;
-  //   },
-  // },
 };
 </script>
 

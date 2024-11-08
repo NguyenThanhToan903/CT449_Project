@@ -1,3 +1,4 @@
+import { data } from "jquery";
 import apiService from "../api.service";
 
 class ProductService {
@@ -25,7 +26,8 @@ class ProductService {
   async getAllProducts() {
     try {
       const response = await this.products.get(`/`);
-      return response.data;
+      const datas = response.data;
+      return datas;
     } catch (error) {
       throw new Error("Error fetching products");
     }
