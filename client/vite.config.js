@@ -9,31 +9,31 @@ export default defineConfig({
     port: 3001,
     proxy: {
       "/api": {
-        target: "http://localhost:3000/",
+        target: "https://ct449-project-2.onrender.com",
         changeOrigin: true,
       },
       "/admin": {
-        target: "http://localhost:3000/",
+        target: "https://ct449-project-2.onrender.com",
         changeOrigin: true,
       },
       // "/admin/users": {
-      //   target: "http://localhost:3000/",
+      //   target: "https://ct449-project-2.onrender.com",
       //   changeOrigin: true,
       // },
       // "/admin-products": {
-      //   target: "http://localhost:3000/",
+      //   target: "https://ct449-project-2.onrender.com",
       //   changeOrigin: true,
       // },
       "/admin-products": {
-        target: "http://localhost:3000/",
+        target: "https://ct449-project-2.onrender.com",
         changeOrigin: true,
       },
       "/user": {
-        target: "http://localhost:3000/",
+        target: "https://ct449-project-2.onrender.com",
         changeOrigin: true,
       },
       "/user/product": {
-        target: "http://localhost:3000/",
+        target: "https://ct449-project-2.onrender.com",
         changeOrigin: true,
       },
     },
