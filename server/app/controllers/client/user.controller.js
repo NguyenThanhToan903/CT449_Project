@@ -13,6 +13,7 @@ exports.register = async (req, res) => {
     phone,
     address,
     sex,
+    position,
   } = req.body;
 
   // Kiểm tra xem tất cả các trường bắt buộc đã được điền
@@ -24,12 +25,12 @@ exports.register = async (req, res) => {
     !password_confirm ||
     !phone ||
     !address ||
-    !sex
+    !sex ||
+    !position
   ) {
     return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin." });
   }
 
-  // Kiểm tra mật khẩu và xác nhận mật khẩu
   if (password !== password_confirm) {
     return res.status(400).json({ message: "Mật khẩu không khớp." });
   }
@@ -49,6 +50,7 @@ exports.register = async (req, res) => {
       phone,
       address,
       sex,
+      position,
     });
 
     const result = await newUser.save();

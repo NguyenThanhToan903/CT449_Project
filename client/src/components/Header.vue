@@ -13,12 +13,7 @@
 
             <p
               class="navbar-item"
-              v-if="
-                userRole !== 'admin' &&
-                isLoggedIn &&
-                $route.name !== 'login' &&
-                $route.name !== 'register'
-              "
+              v-if="isLoggedIn"
               @click="navigateToBorrowedBooks('borrowing')"
             >
               Sách đã mượn
@@ -27,39 +22,18 @@
             <p
               class="navbar-item"
               @click="navigateToBorrowedBooks('add-product')"
-              v-if="
-                userRole === 'admin' &&
-                $route.name !== 'add-product' &&
-                isLoggedIn &&
-                $route.name !== 'login' &&
-                $route.name !== 'register'
-              "
             >
               Thêm sách
             </p>
             <p
               class="navbar-item"
               @click="navigateToBorrowedBooks('admin-products')"
-              v-if="
-                userRole === 'admin' &&
-                $route.name !== 'admin-products' &&
-                isLoggedIn &&
-                $route.name !== 'login' &&
-                $route.name !== 'register'
-              "
             >
               Quản lý mượn
             </p>
             <p
               class="navbar-item"
               @click="navigateToBorrowedBooks('user-list')"
-              v-if="
-                userRole === 'admin' &&
-                $route.name !== 'user-list' &&
-                isLoggedIn &&
-                $route.name !== 'login' &&
-                $route.name !== 'register'
-              "
             >
               Người dùng
             </p>
@@ -67,7 +41,6 @@
           <div v-if="userRole !== 'admin' && isLoggedIn">
             <p @click="profile(user.data._id)" class="user-item">Tài khoản</p>
           </div>
-          <!-- <div> -->
           <div v-if="!isLoggedIn" class="user-auth">
             <span v-if="$route.name !== 'register'">
               <router-link :to="{ name: 'register' }" class="navbar-link"
@@ -97,7 +70,10 @@ import AdminService from "@/services/admin/account.service";
 export default {
   data() {
     return {
-      user: null,
+      user: {
+        profile: null,
+        role: null,
+      },
     };
   },
   computed: {
@@ -122,7 +98,7 @@ export default {
     },
     async getUser() {
       const email = localStorage.getItem("email");
-      this.user = await AccountService.findByEmail(email);
+      this.user.profile = await AccountService.findByEmail(email);
     },
     async logout() {
       try {

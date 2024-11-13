@@ -36,7 +36,6 @@
             >
               Mượn ngay
             </button>
-            <!--  -->
 
             <p class="stock" v-if="product.stock === 0">Đã hết</p>
             <p
@@ -105,35 +104,35 @@ export default {
   },
   methods: {
     async getUser() {
-      const email = localStorage.getItem("email");
+      const email = this.$store.state.userEmail;
       this.user = await User.findByEmail(email);
-      console.log(this.user.data._id);
+      console.log(this.user.data);
     },
     async getProduct() {
       try {
         this.product = await ProductService.getProductById(
           this.$route.params.id
         );
-        await this.getUser();
 
-        // if (this.product.status === "pending") this.status = "pending";
-        // else if (this.product.status === "borrowing") this.status = "borrowing";
-        // else this.status = "0";
+        await this.getUser();
 
         const borrowStatus = await ProductClient.checkBorrowStatus(
           this.product._id,
           this.user.data._id
         );
+
         if (borrowStatus && borrowStatus.borrowed) {
           if (borrowStatus.borrowed === "cancelled") this.status = "0";
           else if (borrowStatus.borrowed === "returned") this.status = "0";
           else this.status = borrowStatus.borrowed;
         }
+        x;
       } catch (error) {
         this.errorMessage = "Failed to fetch product. Please try again later.";
         console.error("Error fetching product:", error.message);
       }
     },
+
     async deleteProduct() {
       try {
         if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {

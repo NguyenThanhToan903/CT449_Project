@@ -71,6 +71,37 @@ export default {
     },
   },
 
+  // methods: {
+  //   async submit(e) {
+  //     e.preventDefault();
+  //     console.log("hello");
+  //     const Admin = await AdminService.findByEmail(this.account.email);
+  //     console.log(Admin);
+  //     if (Admin.data.message === "Admin not found") {
+  //       await AccountService.login(this.account);
+  //       this.$store.commit("login", this.account.email);
+  //       this.$store.commit("client");
+  //       localStorage.setItem("email", this.account.email);
+  //       localStorage.setItem("userRole", "client");
+  //       const redirect = this.$route.query.redirect || { name: "home" };
+  //       console.log(this.$route.query.redirect);
+  //       this.$router.push(redirect);
+  //     } else {
+  //       if (Admin.data.position === "admin") {
+  //         await AdminService.login(this.account);
+  //         this.$store.commit("login", this.account.email);
+  //         this.$store.commit("admin");
+  //         localStorage.setItem("email", this.account.email);
+  //         localStorage.setItem("userRole", "admin");
+  //         const redirect = this.$route.query.redirect || {
+  //           name: "admin-products",
+  //         };
+  //         console.log(this.$route.query.redirect);
+  //         this.$router.push(redirect);
+  //       }
+  //     }
+  //   },
+  // },
   methods: {
     async submit(e) {
       e.preventDefault();
@@ -81,8 +112,8 @@ export default {
         await AccountService.login(this.account);
         this.$store.commit("login", this.account.email);
         this.$store.commit("client");
-        localStorage.setItem("email", this.account.email);
-        localStorage.setItem("userRole", "client");
+        this.$store.dispatch("addLoginHistory", this.account.email);
+
         const redirect = this.$route.query.redirect || { name: "home" };
         console.log(this.$route.query.redirect);
         this.$router.push(redirect);
@@ -91,8 +122,8 @@ export default {
           await AdminService.login(this.account);
           this.$store.commit("login", this.account.email);
           this.$store.commit("admin");
-          localStorage.setItem("email", this.account.email);
-          localStorage.setItem("userRole", "admin");
+          this.$store.dispatch("addLoginHistory", this.account.email);
+
           const redirect = this.$route.query.redirect || {
             name: "admin-products",
           };

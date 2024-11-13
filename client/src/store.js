@@ -1,27 +1,38 @@
-// Vuex Store
-import { createStore } from "vuex";
+import Vuex from "vuex";
 
-export default createStore({
+const store = new Vuex.Store({
   state: {
-    isAuthenticated: false,
-    user: null,
-    role: null,
+    user: JSON.parse(localStorage.getItem("user")) || null,
   },
   mutations: {
-    login(state, user) {
-      state.isAuthenticated = true;
-      state.user = user;
+    SET_USER(state, user) {
+      state.user = state;
+      localStorage.setItem("user", JSON.stringify(user));
     },
-    admin(state) {
-      state.role = "admin";
-    },
-    client(state) {
-      state.role = "client";
-    },
-    logout(state) {
-      state.isAuthenticated = false;
+
+    REMOVE_USER(state) {
       state.user = null;
-      state.role = null;
+      localStorage.removeItem("user");
+    },
+  },
+
+  actions: {
+    login({ commit }, user) {
+      commit("SET_USER", user);
+    },
+    logout({ commit }) {
+      commit("REMOVE_USER");
+    },
+  },
+
+  getters: {
+    isAuthenticated(state) {
+      return state.user !== null;
+    },
+    currentUser(state) {
+      return state.user;
     },
   },
 });
+
+export default store;

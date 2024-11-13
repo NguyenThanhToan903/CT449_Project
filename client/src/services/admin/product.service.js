@@ -1,3 +1,4 @@
+import { data } from "jquery";
 import apiService from "../api.service";
 
 class ProductService {
@@ -52,6 +53,19 @@ class ProductService {
     }
   }
 
+  async checkStatusPidUid(productId, userId) {
+    try {
+      const response = await this.products.get("/checkstatuspiduid", {
+        productId,
+        userId,
+      });
+
+      response.data;
+    } catch (error) {
+      throw new Error(`Error checkStatusPidUid: ${data}`);
+    }
+  }
+
   async deleteProduct(productId) {
     try {
       const response = await this.products.post(`/deleteborrow`, {
@@ -64,6 +78,7 @@ class ProductService {
   }
 
   async getBorrow(data) {
+    //client
     try {
       const response = await this.products.post(`/getBorrow`, data);
       return response.data;
@@ -73,6 +88,7 @@ class ProductService {
   }
 
   async confirmBorrow(data) {
+    //admin
     try {
       const response = await this.products.post(`/confirm-borrow`, data);
 

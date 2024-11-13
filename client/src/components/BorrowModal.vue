@@ -41,12 +41,11 @@ export default {
             email: this.user.email,
             // date: "7 ngày",
           };
-          console.log(this.product._id, data);
           await ProductService.borrowProduct(this.product._id, data);
-          console.log("Mượn sách thành công!");
+          console.log("[Borrow Modal] Mượn sách thành công!");
 
           Swal.fire({
-            position: "top-end",
+            position: "center",
             icon: "success",
             title: "Đã gửi yêu cầu thành công!",
             showConfirmButton: false,
@@ -60,7 +59,7 @@ export default {
           });
           this.closeModal();
         } catch (error) {
-          console.error("Lỗi khi mượn sách:", error.message);
+          console.error("[Borrow Modal] Lỗi khi mượn sách:", error.message);
         }
       }
     },
