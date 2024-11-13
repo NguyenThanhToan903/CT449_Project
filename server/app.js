@@ -13,7 +13,7 @@ database.connect();
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3001"],
+    origin: ["https://ct449-project-2.onrender.com"],
   })
 );
 app.use(express.json());
