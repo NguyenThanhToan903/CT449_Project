@@ -9,11 +9,11 @@ export default defineConfig({
     port: 3001,
     proxy: {
       "/api": {
-        target: "https://ct449-project-2.onrender.com",
+        target: "https://ct449-project-2.onrender.com/",
         changeOrigin: true,
       },
       "/admin": {
-        target: "https://ct449-project-2.onrender.com",
+        target: "https://ct449-project-2.onrender.com/",
         changeOrigin: true,
       },
       // "/admin/users": {
@@ -25,15 +25,15 @@ export default defineConfig({
       //   changeOrigin: true,
       // },
       "/admin-products": {
-        target: "https://ct449-project-2.onrender.com",
+        target: "https://ct449-project-2.onrender.com/",
         changeOrigin: true,
       },
       "/user": {
-        target: "https://ct449-project-2.onrender.com",
+        target: "https://ct449-project-2.onrender.com/",
         changeOrigin: true,
       },
       "/user/product": {
-        target: "https://ct449-project-2.onrender.com",
+        target: "https://ct449-project-2.onrender.com/",
         changeOrigin: true,
       },
     },
