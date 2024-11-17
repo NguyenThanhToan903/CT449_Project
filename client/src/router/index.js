@@ -37,7 +37,7 @@ const ClientRoutes = [
         name: "borrowing",
         component: () => import("@/components/Borrowing.vue"),
         beforeMount: (to, from, next) => {
-          if (!store.state.isAuthenticated) {
+          if (!store.getters.isAuthenticated) {
             next({ name: "login" });
           } else {
             next();
@@ -63,7 +63,7 @@ const AdminRoutes = [
         name: "add-product",
         component: () => import("@/components/AddProducts.vue"),
         beforeEnter: (to, from, next) => {
-          if (!store.state.isAuthenticated) {
+          if (!store.getters.isAuthenticated) {
             next({ name: "login" });
           } else {
             next();
@@ -80,7 +80,7 @@ const AdminRoutes = [
         name: "product-edit",
         component: () => import("@/components/EditProduct.vue"),
         beforeEnter: (to, from, next) => {
-          if (!store.state.isAuthenticated) {
+          if (!store.getters.isAuthenticated) {
             next({ name: "login" });
           } else {
             next();

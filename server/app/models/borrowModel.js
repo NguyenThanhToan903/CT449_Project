@@ -20,6 +20,6 @@ const borrowSchema = mongoose.Schema({
     default: "pending",
   },
 });
-const BorrowModel = mongoose.model("borrow", borrowSchema);
+const BorrowModel = mongoose.model("borrows", borrowSchema);
 
 module.exports = BorrowModel;

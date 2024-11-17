@@ -19,7 +19,6 @@ module.exports.create = async (req, res, next) => {
       yearPublish,
     } = req.body;
 
-    // Kiểm tra xem tất cả các trường dữ liệu cần thiết đã được điền vào hay chưa
     if (
       !title ||
       !author ||
@@ -34,11 +33,9 @@ module.exports.create = async (req, res, next) => {
       return res.status(400).json({ message: "Please fill all fields" });
     }
 
-    // Chuyển đổi giá và số lượng thành số nguyên
     const parsedPrice = parseInt(price);
     const parsedStock = parseInt(stock);
 
-    // Tính toán giá mới nếu không được cung cấp
     let calculatedPriceNew = priceNew;
     if (!calculatedPriceNew || isNaN(calculatedPriceNew)) {
       calculatedPriceNew = (
@@ -48,7 +45,6 @@ module.exports.create = async (req, res, next) => {
     }
     console.log(calculatedPriceNew);
 
-    // Tạo cuốn sách mới
     const book = new Product({
       title,
       author,
@@ -63,49 +59,45 @@ module.exports.create = async (req, res, next) => {
       yearPublish,
     });
 
-    // Lưu cuốn sách vào cơ sở dữ liệu
     await book.save();
 
-    // Trả về cuốn sách đã được tạo
-    res.status(201).json(book);
+    res.status(201).json({ success: true, book });
   } catch (error) {
-    // Xử lý lỗi nếu có
     console.error("Error creating book:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-module.exports.createDayBorrow = async (req, res, next) => {
-  const time = req.body;
-  console.log(time);
-  const rangeTime = new Date({
-    name: time.name,
-    timeBorrow: time.rangeTime,
-  });
-  await rangeTime.save();
-  res.status(201).json(rangeTime);
-};
+// module.exports.createDayBorrow = async (req, res, next) => {
+//   const time = req.body;
+//   console.log(time);
+//   const rangeTime = new Date({
+//     name: time.name,
+//     timeBorrow: time.rangeTime,
+//   });
+//   await rangeTime.save();
+//   res.status(201).json(rangeTime);
+// };
 
-module.exports.update = async (req, res, next) => {
-  const id = req.params.id;
-  // console.log(id);
-  try {
-    req.body.discountPercentage = parseInt(req.body.discountPercentage);
-    req.body.stock = parseInt(req.body.stock);
+// module.exports.update = async (req, res, next) => {
+//   const id = req.params.id;
+//   try {
+//     req.body.discountPercentage = parseInt(req.body.discountPercentage);
+//     req.body.stock = parseInt(req.body.stock);
 
-    req.body.deleted = req.body.deleted;
+//     req.body.deleted = req.body.deleted;
 
-    await Product.updateOne(
-      {
-        _id: id,
-      },
-      req.bodyres,
-      res.send("Cap nhat thanh cong")
-    );
-  } catch (error) {
-    console.error(error);
-  }
-};
+//     await Product.updateOne(
+//       {
+//         _id: id,
+//       },
+//       req.bodyres,
+//       res.send("Cap nhat thanh cong")
+//     );
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 module.exports.delete = async (req, res) => {
   const id = req.body.id;
@@ -163,16 +155,6 @@ module.exports.detail = async (req, res) => {
   console.log(product);
 };
 
-module.exports.getAll = async (req, res, next) => {
-  try {
-    const books = await Product.find({ deleted: false });
-    res.json(books);
-  } catch (error) {
-    console.error("Error finding books:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
 module.exports.getBorrow = async (req, res, next) => {
   console.log("getBorrow");
   const { type } = req.body;
@@ -186,6 +168,7 @@ module.exports.getBorrow = async (req, res, next) => {
 
 module.exports.editProduct = async (req, res, next) => {
   const id = req.params.id;
+
   try {
     const {
       title,

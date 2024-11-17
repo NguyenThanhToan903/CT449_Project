@@ -294,8 +294,8 @@
     "priceNew": 0,
     "discountPercentage": 0,
     "image": "https://www.dbooks.org/img/books/1098127463s.jpg",
-    "namePublish": "",
-    "addressPublish": "",
+    "namePublish": "AbC",
+    "addressPublish": "ABC",
     "yearPublish": "1970-01-01T00:00:00.000+00:00",
     "deleted": false
   },
@@ -308,8 +308,8 @@
     "priceNew": 0,
     "discountPercentage": 0,
     "image": "https://www.dbooks.org/img/books/1805112015s.jpg",
-    "namePublish": "",
-    "addressPublish": "",
+    "namePublish": "ABC",
+    "addressPublish": "ABC",
     "yearPublish": "1970-01-01T00:00:00.000+00:00",
     "deleted": false
   },

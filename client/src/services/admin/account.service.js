@@ -21,7 +21,7 @@ class AccountService {
       const response = await this.Admin.post(`/check-email`, { email });
       return response;
     } catch (error) {
-      console.error("Đã xảy ra lỗi:", error);
+      console.error("CheckEmailExists", error);
       throw error;
     }
   }

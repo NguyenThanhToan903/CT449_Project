@@ -1,4 +1,5 @@
 const AdminModel = require("../../models/adminModel");
+const UserModel = require("../../models/readerModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -18,7 +19,6 @@ exports.register = async (req, res) => {
     sex,
   } = req.body;
 
-  // Kiểm tra xem tất cả các trường bắt buộc đã được điền
   if (
     !email ||
     !first_name ||
@@ -33,7 +33,6 @@ exports.register = async (req, res) => {
     return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin." });
   }
 
-  // Kiểm tra mật khẩu và xác nhận mật khẩu
   if (password !== password_confirm) {
     return res.status(400).json({ message: "Mật khẩu không khớp." });
   }
@@ -73,7 +72,9 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+  console.log("[ADMIN CONTROLLER]Login");
   const admin = await AdminModel.findOne({ email });
+  console.log("[ADMIN CONTROLLER]account", admin);
   if (!admin) {
     return res.status(400).json({ message: "Email not found." });
   }
@@ -83,7 +84,6 @@ exports.login = async (req, res) => {
     return res
       .status(401)
       .json({ message: "Email or password is incorrect", user: admin });
-  //================================================================
   const token = jwt.sign(
     {
       _id: admin._id,
@@ -97,6 +97,10 @@ exports.login = async (req, res) => {
   res.send({
     message: "succes",
     user: admin,
+  });
+  console.log({
+    FILE: "ADMIN-CONTROLLER",
+    LOGIN: "succes",
   });
 };
 
@@ -112,25 +116,21 @@ exports.logout = async (req, res) => {
 
 exports.checkAuthentication = async (req, res) => {
   try {
-    // Lấy token từ cookie
     const token = req.cookies["jwt"];
     if (!token) {
       return res.json({ authenticated: false, message: "Unauthorized" });
     }
 
-    // Xác minh token
     const decodedToken = jwt.verify(token, process.env.KEY);
     if (!decodedToken) {
       return res.json({ authenticated: false, message: "Unauthorized" });
     }
 
-    // Tìm người dùng trong cơ sở dữ liệu
     const user = await AdminModel.findById(decodedToken._id);
     if (!user) {
       return res.json({ authenticated: false, message: "User not found" });
     }
 
-    // Trả về dữ liệu người dùng nếu muốn
     return res.json({ authenticated: true, user });
   } catch (err) {
     console.error("Error checking authentication:", err);
@@ -166,9 +166,10 @@ exports.findByEmail = async (req, res) => {
 
   try {
     const admin = await AdminModel.findOne({ email });
-
     if (!admin) {
-      return res.json({ message: "Admin not found" });
+      const user = await UserModel.findOne({ email });
+      if (!user) return res.json({ message: "User not found" });
+      else return res.json({ message: "Admin not found", user });
     }
 
     res.status(200).json(admin);

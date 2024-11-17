@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
 
   if (!match)
     return res.status(401).json({ message: "Email or password is incorrect" });
-  //================================================================
+
   const token = jwt.sign(
     {
       _id: user._id,
@@ -88,6 +88,11 @@ exports.login = async (req, res) => {
   res.send({
     message: "succes",
   });
+  console.log({
+    FILE: "USERCONTROLLER",
+    LOGIN: "succes",
+  });
+  // return { message: "succes", acc: user };
 };
 
 exports.checkAuthentication = async (req, res) => {
@@ -107,7 +112,10 @@ exports.checkAuthentication = async (req, res) => {
     // Tìm người dùng trong cơ sở dữ liệu
     const user = await ReaderModel.findById(decodedToken._id);
     if (!user) {
-      return res.json({ authenticated: false, message: "User not found" });
+      return res.json({
+        authenticated: false,
+        message: "User not found reader",
+      });
     }
 
     // Trả về dữ liệu người dùng nếu muốn
@@ -135,7 +143,7 @@ exports.findByEmail = async (req, res) => {
     const user = await ReaderModel.findOne({ email });
 
     if (!user) {
-      return res.json({ message: "User not found" });
+      return res.json({ message: "User not found email" });
     }
     return res.send(user);
   } catch (error) {
@@ -159,7 +167,7 @@ exports.checkBorrowStatus = async (req, res) => {
 
     const user = await ReaderModel.findById(decodedToken._id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found id" });
     }
 
     // Logic kiểm tra trạng thái mượn sách

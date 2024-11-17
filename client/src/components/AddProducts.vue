@@ -61,10 +61,8 @@
                 />
                 <div class="input-line"></div>
               </div>
-              <!-- </form> -->
             </div>
             <div class="right-section">
-              <!-- <form @submit.prevent="addNewProduct" class="form"> -->
               <div class="form-group">
                 <label for="discount">Giảm giá %:</label>
                 <input
@@ -151,8 +149,6 @@ export default {
       namePublish: 0,
       addressPublish: " ",
     });
-
-    //
 
     const addNewProduct = async () => {
       try {

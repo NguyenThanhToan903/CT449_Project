@@ -1,4 +1,3 @@
-import { data } from "jquery";
 import apiService from "../api.service";
 
 class ProductService {
@@ -9,6 +8,7 @@ class ProductService {
   async checkBorrow(productId, data) {
     try {
       const response = await this.products.post(`/${productId}/check`, data);
+      console.log("checkBorrow(productId, data)", productId, data);
       return response.data;
     } catch (error) {
       throw new Error(`Error borrowing product with ID ${productId}`);

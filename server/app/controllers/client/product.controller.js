@@ -26,17 +26,43 @@ module.exports.getAll = async (req, res, next) => {
 module.exports.checkBorrowBook = async (req, res, next) => {
   const bookId = req.params.id;
   const userId = req.body._id;
-  console.log("checkBook", bookId, userId);
-  const check = await BorrowedBook.findOne({
-    bookId: bookId,
-    status: { $ne: "cancelled" },
-  });
-  if (!check) return res.send({ message: "false" });
-  if (check["userId"].toHexString() === userId) {
-    const status = check["status"].toString();
-    return res.send({ message: status });
+  console.log("checkBook", bookId, userId, req.body);
+  console.log(req.body);
+  try {
+    // Find all borrowed book records for the given user ID
+    const borrowedBooks = await BorrowedBook.find({
+      userId: userId,
+      bookId: bookId, // Optional: Only check for this specific book if needed
+    });
+    console.log("UserID", userId);
+    console.log("[PRODUCT CONTROLLER]", borrowedBooks);
+
+    if (!borrowedBooks || borrowedBooks.length === 0) {
+      // User has no records of borrowing the book
+      return res.send({ message: "YES" }); // Book is not borrowed, so it's available
+    }
+
+    // Check the status of the borrowed books
+    const isCurrentlyBorrowed = borrowedBooks.some(
+      (book) => book.status === "pending" || book.status === "borrowing"
+    );
+
+    const borrowedBook = borrowedBooks.find(
+      (book) => book.status === "pending" || book.status === "borrowing"
+    );
+
+    if (borrowedBook) {
+      console.log(borrowedBook.status);
+      // User is currently borrowing or has a pending status for the book
+      return res.send({ message: borrowedBook.status });
+    } else {
+      // User's borrowed books are all 'free' or 'return' status
+      return res.send({ message: "AYES" });
+    }
+  } catch (error) {
+    console.error("Error checking borrowed books:", error);
+    return res.status(500).send({ message: "Error checking borrow status" });
   }
-  return res.send({ message: "false" });
 };
 
 module.exports.borrowBook = async (req, res, next) => {
@@ -44,7 +70,7 @@ module.exports.borrowBook = async (req, res, next) => {
     const bookId = req.params.id;
     const { email } = req.body;
     // const { date } = req.body;
-    console.log(bookId, email);
+    console.log("[Borrow]" + bookId, req.body);
     const user = await User.findOne({ email });
     const book = await Book.findById(bookId);
     // const rangReturn = await dataDate.findOne({ name: date });
@@ -69,7 +95,7 @@ module.exports.borrowBook = async (req, res, next) => {
     await book.save();
     await borrowedBook.save();
     console.log(borrowedBook);
-    res.status(201).json({ message: "Borrow-Success" });
+    res.status(201).json({ message: "Borrow-Success", data: borrowedBook });
   } catch (error) {
     console.error("Lỗi khi mượn sách:", error);
     res.status(500).json({ message: "Đã có lỗi xảy ra khi mượn sách" });

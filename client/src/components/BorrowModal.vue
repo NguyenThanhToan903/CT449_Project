@@ -23,51 +23,60 @@ export default {
       type: Object,
       required: true,
     },
-    user: {
-      type: Object,
-      required: true,
-    },
+  },
+  //   user: {
+  //     type: Object,
+  //     required: true,
+  //   },
+  // },
+
+  data() {
+    return {
+      user: null,
+      productId: "",
+      status: "",
+    };
   },
 
   methods: {
     async borrowBook() {
-      if (!this.user) {
-        const currentUrl = this.$route.fullPath;
-        this.$router.push({ name: "login", query: { redirect: currentUrl } });
-        this.closeModal();
-      } else {
-        try {
-          const data = {
-            email: this.user.email,
-            // date: "7 ngày",
-          };
-          await ProductService.borrowProduct(this.product._id, data);
-          console.log("[Borrow Modal] Mượn sách thành công!");
+      try {
+        const dataUser = localStorage.getItem("user");
+        if (dataUser) {
+          console.log(dataUser);
+          this.user = JSON.parse(dataUser);
 
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Đã gửi yêu cầu thành công!",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-
-          this.$router.push({
-            name: `product-detail`,
-            params: { id: this.product._id },
-            query: { message: "pending" },
-          });
-          this.closeModal();
-        } catch (error) {
-          console.error("[Borrow Modal] Lỗi khi mượn sách:", error.message);
+          console.log("[borrowBook]", this.user);
         }
+
+        this.productId = this.$route.params.id;
+        console.log(this.productId);
+        console.log(this.user);
+        const a = await ProductService.borrowProduct(this.productId, this.user);
+        console.log("[Borrow Modal] Mượn sách thành công!");
+        console.log(a);
+        this.status = a.data.status;
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Đã gửi yêu cầu thành công!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        this.$router.push({
+          name: `product-detail`,
+          params: { id: this.product._id },
+          query: { message: a.data.status },
+        });
+        this.closeModal();
+      } catch (error) {
+        console.error("[Borrow Modal] Lỗi khi mượn sách:", error.message);
       }
     },
     closeModal() {
       this.$emit("close");
-      this.$emit("bookBorrowed", {
-        state: "pending",
-      });
+      this.$emit("data", this.status);
     },
   },
 };

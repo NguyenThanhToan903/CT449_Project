@@ -85,6 +85,9 @@ export default {
     await this.getProducts();
     await this.getUser();
   },
+  beforeMount() {
+    // this.check();
+  },
   watch: {
     searchQuery(newValue, oldValue) {
       if (newValue !== oldValue) {
@@ -143,7 +146,6 @@ export default {
       this.$router.push({
         name: `product-detail`,
         params: { id: book._id },
-        // query: { message: message },
       });
       this.$emit("productStatus");
     },

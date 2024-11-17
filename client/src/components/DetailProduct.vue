@@ -67,6 +67,7 @@
     <ProductItem class="product-list-detail" />
     <BorrowModal
       v-if="showModal"
+      @data="status = $event"
       @close="showModal = false"
       @bookBorrowed="bookBorrowedHandler"
       :product="product"
@@ -85,11 +86,11 @@ import BorrowModal from "./BorrowModal.vue";
 export default {
   data() {
     return {
+      user: null,
       product: null,
+      status: "",
       errorMessage: "",
       showModal: false,
-      status: "",
-      user: null,
       isBorrowing: false,
     };
   },
@@ -104,32 +105,77 @@ export default {
   },
   methods: {
     async getUser() {
-      const email = this.$store.state.userEmail;
-      this.user = await User.findByEmail(email);
-      console.log(this.user.data);
+      try {
+        const dataUser = localStorage.getItem("user");
+        if (dataUser) {
+          console.log(dataUser);
+          // this.user = await User.findByEmail(email);
+          this.user = JSON.parse(dataUser);
+
+          console.log("[GetUser-detail]", this.user);
+        } else {
+          throw new Error("No user email found in local storage");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     },
+
     async getProduct() {
       try {
-        this.product = await ProductService.getProductById(
-          this.$route.params.id
-        );
-
-        await this.getUser();
-
-        const borrowStatus = await ProductClient.checkBorrowStatus(
-          this.product._id,
-          this.user.data._id
-        );
-
-        if (borrowStatus && borrowStatus.borrowed) {
-          if (borrowStatus.borrowed === "cancelled") this.status = "0";
-          else if (borrowStatus.borrowed === "returned") this.status = "0";
-          else this.status = borrowStatus.borrowed;
+        const productId = this.$route.params.id;
+        if (productId) {
+          console.log(productId);
+          this.product = await ProductService.getProductById(productId);
+          const dataUser = localStorage.getItem("user");
+          if (dataUser) {
+            this.user = JSON.parse(dataUser);
+            console.log("[GetUser-detail]", this.user);
+          }
+          console.log("[DETAIL BORROW - getproduct]", this.product._id);
+          console.log("[DETAIL BORROW - getuser]", this.user.data._id);
+          const borrowStatus = await ProductClient.checkBorrow(
+            this.product._id,
+            { _id: this.user.data._id }
+          );
+          console.log("[GetProduct-detail]", borrowStatus);
+          if (borrowStatus.message == "YES") {
+            this.status = "0";
+          } else {
+            this.status = borrowStatus.message;
+          }
+        } else {
+          throw new Error("Product ID not found in route parameters");
         }
-        x;
       } catch (error) {
         this.errorMessage = "Failed to fetch product. Please try again later.";
-        console.error("Error fetching product:", error.message);
+        console.error("Error fetching product data:", error.message);
+      }
+    },
+
+    async checkBorrowStatus() {
+      try {
+        console.log("User ID CheckBook" + this.user);
+        if (this.product && this.user && this.user.data) {
+          console.log("[DETAIL BORROW - ]" + this.product);
+          console.log(this.user._id);
+          const borrowStatus = await ProductClient.checkBorrow(
+            this.product._id,
+            this.user._id
+          );
+          console.log(
+            "[DETAIL BORROW - checkBorrowStatus]",
+            this.product,
+            this.user,
+            borrowStatus
+          );
+        } else {
+          console.warn(
+            "Product or user data is not available for borrow status check"
+          );
+        }
+      } catch (error) {
+        console.error("Error checking borrow status:", error);
       }
     },
 
@@ -138,7 +184,6 @@ export default {
         if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
           await ProductService.deleteProduct(this.product._id);
           alert("Sản phẩm đã được xóa thành công!");
-
           this.$router.push({ name: "home" });
         }
       } catch (error) {
@@ -146,19 +191,19 @@ export default {
         alert("Đã xảy ra lỗi khi xóa sản phẩm. Vui lòng thử lại sau.");
       }
     },
-    handleBorrowClick(data) {
-      if (
-        !this.user ||
-        !this.user.data ||
-        this.user.data.message === "User not found"
-      ) {
+
+    handleBorrowClick() {
+      console.log("handleBorrowClick: " + this.$store.getters.isAuthenticated);
+      if (!this.$store.getters.isAuthenticated) {
+        console.log("[Detail]" + this.$store.getters.isAuthenticated);
         const currentUrl = this.$route.fullPath;
         this.$router.push({
           name: "login",
           query: { redirect: currentUrl },
         });
       } else {
-        this.product.stock = data.quatity;
+        console.log(this.product);
+        // this.product.stock -= 1;
         this.showModal = true;
       }
     },
@@ -169,30 +214,30 @@ export default {
         params: { id: this.product._id },
       });
     },
-    changeQuatity() {
-      this.product.stock = this.product.stock - 1;
+
+    changeQuantity() {
+      if (this.product && this.product.stock > 0) {
+        this.product.stock -= 1;
+      } else {
+        console.warn(
+          "Unable to change quantity. Product stock is insufficient or undefined."
+        );
+      }
     },
 
     bookBorrowedHandler() {
       this.isBorrowing = true;
-      this.status = "pending";
     },
   },
   watch: {
     "$route.params.id": function (newId, oldId) {
       if (newId !== oldId) {
         this.getProduct();
-        // if (borrowStatus && borrowStatus.borrowed) {
-        //   this.isBorrowing = true;
-        //   this.status = borrowStatus.borrowed;
-        // }
       }
     },
-    // "$route.query.message": function (newMessage, oldMessage) {
-    //   if (newMessage !== oldMessage) {
-    //   }
-    // },
   },
+  beforeMount() {},
+
   mounted() {
     this.getUser();
     this.getProduct();
