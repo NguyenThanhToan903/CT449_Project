@@ -54,7 +54,7 @@ const AdminRoutes = [
     component: LayoutAdmin,
     children: [
       {
-        path: "",
+        path: "/borrow",
         name: "admin-products",
         component: () => import("@/components/BorrowList.vue"),
       },
@@ -71,7 +71,7 @@ const AdminRoutes = [
         },
       },
       {
-        path: "/page-admin/user-list",
+        path: "/user-list",
         name: "user-list",
         component: () => import("@/components/UserList.vue"),
       },

@@ -79,7 +79,6 @@
 <script>
 import ProductService from "@/services/admin/product.service";
 import ProductClient from "@/services/client/product.service";
-import User from "@/services/client/accoun.service";
 import ProductItem from "./ProductItem.vue";
 import BorrowModal from "./BorrowModal.vue";
 
@@ -109,7 +108,6 @@ export default {
         const dataUser = localStorage.getItem("user");
         if (dataUser) {
           console.log(dataUser);
-          // this.user = await User.findByEmail(email);
           this.user = JSON.parse(dataUser);
 
           console.log("[GetUser-detail]", this.user);
@@ -203,7 +201,6 @@ export default {
         });
       } else {
         console.log(this.product);
-        // this.product.stock -= 1;
         this.showModal = true;
       }
     },

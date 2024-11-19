@@ -57,7 +57,7 @@ module.exports.checkBorrowBook = async (req, res, next) => {
       return res.send({ message: borrowedBook.status });
     } else {
       // User's borrowed books are all 'free' or 'return' status
-      return res.send({ message: "AYES" });
+      return res.send({ message: "YES" });
     }
   } catch (error) {
     console.error("Error checking borrowed books:", error);

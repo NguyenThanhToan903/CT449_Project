@@ -1,40 +1,36 @@
 <template>
   <div class="borrowed-books-container">
     <h2>Danh sách sách đã mượn</h2>
-    <select v-model="selectedStatus" @change="getStatusSelect(value)">
+    <select v-model="selectedStatus" @change="filterBorrowedBooks">
       <option value="all">Tất cả</option>
       <option value="pending">Chờ xác nhận</option>
       <option value="borrowing">Đang mượn</option>
-      <!-- need deleted cancelled-->
       <option value="cancelled">Đã hủy</option>
-      <option value="deleted">Đã mượn</option>
+      <option value="returned">Đã mượn</option>
     </select>
     <ul class="borrowed-books-list">
       <li
         v-for="book in filteredBooks"
         :key="book._id"
         class="borrowed-book-item"
+        :class="getStatusClass(book.status)"
       >
-      <div v-if="selectedStatus === book.status">
         <div class="book-details">
-          <p @click="toProduct(book.bookId)">
-            <strong>Tên sách:</strong> <p> {{ book.title }}</p>
+          <p>
+            <strong>Tên sách:</strong> <span>{{ book.title }}</span>
           </p>
           <p>
-            <strong>Tác giả:</strong> <p> {{ book.author }}</p>
+            <strong>Tác giả:</strong> <span>{{ book.author }}</span>
           </p>
           <p>
             <strong>Trạng thái:</strong>
             <span v-if="book.status === 'pending'">Chờ xác nhận</span>
-            <!-- Dont need -->
-            <!-- <span v-else-if="book.status === 'returned'">Đã trả</span> -->
-            <!-- <span v-else-if="book.status === 'cancelled'">Đã hủy</span> -->
             <span v-else-if="book.status === 'borrowing'">Đang mượn</span>
-            <span v-else-if="book.status === 'deleted'">Đã mượn</span>
+            <span v-else-if="book.status === 'cancelled'">Đã hủy</span>
+            <span v-else-if="book.status === 'returned'">Đã mượn</span>
           </p>
-          <!-- Need fix -->
-          <p><strong>Ngày mượn:</strong> {{ formatDate(book.borrowedAt) }}</p>
-          <p><strong>Ngày trả:</strong> {{ formatDate(book.returnBy) }}</p>
+          <!-- <p><strong>Ngày mượn:</strong> {{ book.borrowedAt }}</p>
+          <p><strong>Ngày trả:</strong> {{ formatDate(book.returnBy) }}</p> -->
         </div>
         <div>
           <button
@@ -44,16 +40,7 @@
           >
             Hủy
           </button>
-          <!-- <button
-            v-if="book.status === 'cancelled'"
-            class="cancel-button"
-            @click="deleteBorrowed(book.bookId, book.userId)"
-          >
-            Xóa
-          </button> -->
         </div>
-      </div>
-        
       </li>
     </ul>
   </div>
@@ -61,7 +48,6 @@
 
 <script>
 import ProductService from "@/services/client/product.service";
-import User from "@/services/client/accoun.service";
 
 export default {
   data() {
@@ -71,16 +57,17 @@ export default {
       selectedStatus: "all",
       user: null,
       isLoaded: false,
-      
     };
+  },
+  async created() {
+    await this.getUser();
+    await this.refreshBorrowedBooks();
   },
   methods: {
     async getUser() {
       const dataUser = localStorage.getItem("user");
-      if(dataUser){
-        console.log("[Borrowing]" + this.user);
+      if (dataUser) {
         this.user = JSON.parse(dataUser);
-
       }
     },
     toProduct(direct) {
@@ -89,74 +76,47 @@ export default {
     formatDate(date) {
       return new Date(date).toLocaleDateString("vn");
     },
-
-    getStatusSelect(value){
-      selectedStatus = value;
-      console.log("SelectedStatus [Borrowing] :" , this.selectedStatus);
-      return selectedStatus;
+    filterBorrowedBooks() {
+      if (this.selectedStatus === "all") {
+        this.filteredBooks = this.borrowedBooks;
+      } else {
+        this.filteredBooks = this.borrowedBooks.filter(
+          (book) => book.status === this.selectedStatus
+        );
+      }
     },
-
+    getStatusClass(status) {
+      switch (status) {
+        case "pending":
+          return "status-pending";
+        case "borrowing":
+          return "status-borrowing";
+        case "cancelled":
+          return "status-cancelled";
+        case "return":
+          return "status-return";
+        default:
+          return "";
+      }
+    },
     async cancelBorrow(bookId, userId) {
       await ProductService.cancelBorrow(bookId, { userId: userId });
       await this.refreshBorrowedBooks();
     },
-    
-    // Need chance or delete
-    // filterBorrowedBooks() {
-    //   let sortedBooks;
-    //   if (this.selectedStatus === "all") {
-    //     sortedBooks = this.borrowedBooks.filter((book) => book.status !== "0");
-    //   } else {
-    //     sortedBooks = this.borrowedBooks.filter(
-    //       (book) => book.status === this.selectedStatus
-    //     );
-    //   }
-    //   sortedBooks.sort((a, b) => {
-    //     const statusPriority = {
-    //       pending: 1,
-    //       cancelled: 2,
-    //       borrowing: 3,
-    //       // returned: 4,
-    //     };
-    //     return statusPriority[a.status] - statusPriority[b.status];
-    //   });
-    //   this.filteredBooks = sortedBooks;
-    // },
-   
-    // async deleteBorrowed(bookId, userId) {
-    //   console.log(bookId, {
-    //     userId: userId,
-    //     status: "deleted",
-    //   });
-    //   await ProductService.deleteBorrow(bookId, {
-    //     userId: userId,
-    //     status: "deleted",
-    //   });
-    //   await this.refreshBorrowedBooks();
-    // },
-    // async refreshBorrowedBooks() {
-    //   const userId = this.user.data._id;
-    //   const books = await ProductService.getBorrowedByUserId(userId);
-    //   for (const bookItem of books) {
-    //     const book = await ProductService.getProductById(bookItem.bookId);
-    //     bookItem.title = book.title;
-    //     bookItem.author = book.author;
-    //     bookItem.status = bookItem.status;
-    //   }
-    //   this.borrowedBooks = books;
-    //   this.isLoaded = true;
-    //   this.filterBorrowedBooks();
-    // },
-  },
-  async mounted() {
-    const isUser = await localStorage.getItem("userEmail");
-    console.log("[BRROWING]"+ isUser);
-    if (!isUser) this.$router.push({ name: "login" });
-    await this.getUser();
-    if (this.user.data.message === "User not found") {
-      this.$router.push({ name: "login" });
-    }
-    // await this.refreshBorrowedBooks();
+    async refreshBorrowedBooks() {
+      const userId = this.user?.data._id;
+      if (userId) {
+        const books = await ProductService.getBorrowedByUserId(userId);
+        for (const bookItem of books) {
+          const book = await ProductService.getProductById(bookItem.bookId);
+          bookItem.title = book.title;
+          bookItem.author = book.author;
+        }
+        this.borrowedBooks = books;
+        this.filterBorrowedBooks();
+        this.isLoaded = true;
+      }
+    },
   },
 };
 </script>
@@ -184,6 +144,22 @@ export default {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
+}
+
+.status-pending {
+  border-left: 5px solid #ffc107;
+}
+
+.status-borrowing {
+  border-left: 5px solid #28a745;
+}
+
+.status-cancelled {
+  border-left: 5px solid #dc3545;
+}
+
+.status-deleted {
+  border-left: 5px solid #6c757d;
 }
 
 .borrowed-book-item .book-details {

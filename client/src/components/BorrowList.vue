@@ -8,8 +8,7 @@
       <option default value="all">Tất cả</option>
       <option value="pending">Chờ xác nhận</option>
       <option value="borrow">Đang mượn</option>
-      <!-- <option value="return">Đã trả</option> -->
-      <option value="deleted">Đã mượn</option>
+      <option value="returned">Đã mượn</option>
     </select>
     <ul class="borrowed-products-list">
       <div
@@ -30,7 +29,7 @@
           <p class="status" v-else-if="borrowedItem.status === 'borrowing'">
             Trạng thái: Đang mượn
           </p>
-          <p class="status" v-else-if="borrowedItem.status === 'deleted'">
+          <p class="status" v-else-if="borrowedItem.status === 'returned'">
             Trạng thái: Đã trả
           </p>
           <p class="status" v-else-if="borrowedItem.status === 'canceled'">
@@ -50,12 +49,12 @@
           >
             Đã trả
           </button>
-          <button
+          <!-- <button
             @click="deleteDisplay(borrowedItem.bookId, borrowedItem.userId)"
             class="delete-button button-b"
           >
             Xóa
-          </button>
+          </button> -->
         </li>
       </div>
     </ul>
